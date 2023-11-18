@@ -1,0 +1,7 @@
+openapi: 3.0.1
+info:
+  title: Simple User API
+  description: A simple API to retrieve user information.
+  version: 1.0.0
+paths:
+  $ref: "./paths/index.yaml"

@@ -1,0 +1,15 @@
+openapi: 3.0.1
+info:
+  title: Simple User API
+  description: A simple API to retrieve user information.
+  version: 1.0.0
+paths:
+  /:
+    get:
+      tags:
+        - metadata
+      operationId: list-data-sets
+      summary: List available data sets
+      responses:
+        '200':
+          description: Returns a list of data sets
