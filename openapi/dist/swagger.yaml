@@ -1,15 +1,45 @@
 openapi: 3.0.1
 info:
-  title: Simple User API
-  description: A simple API to retrieve user information.
+  title: ボウリングAPI
+  description: ボウリングアプリのためのAPI
   version: 1.0.0
 paths:
-  /:
-    get:
+  /login:
+    post:
       tags:
-        - metadata
-      operationId: list-data-sets
-      summary: List available data sets
+        - login
+      operationId: auth
+      summary: 認証
+      requestBody:
+        description: 認証内容
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                login_id:
+                  type: string
+                  description: ログインID
+                password:
+                  type: string
+                  description: パスワード
       responses:
         '200':
-          description: Returns a list of data sets
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/auth'
+components:
+  schemas:
+    auth:
+      type: object
+      properties:
+        token:
+          type: string
+          description: トークン
+        refresh_token:
+          type: string
+          description: リフレッシュトークン
