@@ -1,0 +1,6 @@
+api:
+- api/**/*
+er:
+- er/**/*
+redoc:
+- openapi/**/*
