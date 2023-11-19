@@ -1,8 +1,0 @@
-get:
-  tags:
-    - metadata
-  operationId: list-data-sets
-  summary: List available data sets
-  responses:
-    '200':
-      description: Returns a list of data sets
