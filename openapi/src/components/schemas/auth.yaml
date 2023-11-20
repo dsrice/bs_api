@@ -1,9 +1,8 @@
-auth:
-  type: object
-  properties:
-    token:
-      type: string
-      description: "トークン"
-    refresh_token:
-      type: string
-      description: "リフレッシュトークン"
+type: object
+properties:
+  token:
+    type: string
+    description: "トークン"
+  refresh_token:
+    type: string
+    description: "リフレッシュトークン"

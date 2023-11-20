@@ -1,0 +1,13 @@
+tags:
+  - login
+operationId: auth
+summary: 認証
+requestBody:
+  $ref: "#/components/requestBodies/login_post"
+responses:
+  '200':
+    $ref: "./login_post_200.yaml"
+  '404':
+    $ref: "#/components/responses/404NotFound"
+  '500':
+    $ref: "#/components/responses/500InternalError"

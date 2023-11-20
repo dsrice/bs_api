@@ -1,0 +1,14 @@
+token:
+  name: token
+  in: header
+  description: 認証トークン
+  required: true
+  schema:
+    type: string
+refresh_token:
+  name: refresh_token
+  in: header
+  description: リフレッシュトークン
+  required: true
+  schema:
+    type: string

@@ -1,0 +1,6 @@
+auth:
+  $ref: "./auth.yaml"
+notFoundError:
+  $ref: "./notFoundError.yaml"
+internalError:
+  $ref: "./internalError.yaml"
