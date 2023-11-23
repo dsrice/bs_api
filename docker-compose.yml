@@ -2,6 +2,8 @@ version: "3"
 services:
   b-api:
     build: .
+    ports:
+      - "1323:1323"
     depends_on:
       - db
     volumes:
@@ -20,7 +22,7 @@ services:
       --innodb_file_format=BARRACUDA
       --innodb_large_prefix=1
     ports:
-      - 3306:3306
+      - "3306:3306"
 
   b-api-ui:
     image: redocly/redoc
