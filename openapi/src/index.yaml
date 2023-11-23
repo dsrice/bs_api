@@ -6,7 +6,7 @@ info:
   version: 1.0.0
 
 paths:
-  $ref: "./paths/index.yaml"
+  $ref: "./paths/path.yaml"
 
 components:
-  $ref: "./components/index.yaml"
+  $ref: "./components/component.yaml"

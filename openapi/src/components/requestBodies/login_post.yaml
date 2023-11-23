@@ -1,0 +1,13 @@
+description: "認証内容"
+required: true
+content:
+  application/json:
+    schema:
+      type: object
+      properties:
+        login_id:
+          type: string
+          description: "ログインID"
+        password:
+          type: string
+          description: "パスワード"

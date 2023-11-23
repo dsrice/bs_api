@@ -1,0 +1,4 @@
+404NotFound:
+  $ref: "./404.yaml"
+500InternalError:
+  $ref: "./500.yaml"
