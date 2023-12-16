@@ -13,8 +13,10 @@ services:
   db:
     image: mysql:5.7
     environment:
-      - MYSQL_DATABASE=test_db
+      - MYSQL_DATABASE=bowling_score
       - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_USER=docker
+      - MYSQL_PASSWORD=docker
     command: >
       --character-set-server=utf8mb4
       --collation-server=utf8mb4_general_ci
@@ -23,6 +25,8 @@ services:
       --innodb_large_prefix=1
     ports:
       - "3306:3306"
+    volumes:
+      - ./db/data:/var/lib/mysql
 
   b-api-ui:
     image: redocly/redoc

@@ -1,0 +1,7 @@
+[mysql]
+  dbname  = "bowling_score"
+  host    = "db"
+  port    = 3306
+  user    = "docker"
+  pass    = "docker"
+  sslmode = "false"
