@@ -11,14 +11,14 @@ type Connection struct {
 	Conn *sql.DB
 }
 
-func NewConnection() Connection {
+func NewConnection() *Connection {
 	c, err := getConnection()
 
 	if err != nil {
 		panic(err)
 	}
 
-	return Connection{Conn: c}
+	return &Connection{Conn: c}
 }
 
 func getConnection() (*sql.DB, error) {

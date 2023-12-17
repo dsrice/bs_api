@@ -1,9 +1,20 @@
 package main
 
-import "app/infra/server"
+import (
+	"app/infra/di"
+	"app/infra/server"
+	"go.uber.org/dig"
+)
 
 func main() {
-	s := server.NewServer()
+	c := dig.New()
 
-	s.Start()
+	di.BuildContainer(c)
+	err := c.Invoke(func(s *server.Server) {
+		s.Start()
+	})
+
+	if err != nil {
+		panic(err)
+	}
 }
