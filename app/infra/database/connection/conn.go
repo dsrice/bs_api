@@ -1,6 +1,7 @@
 package connection
 
 import (
+	"app/infra/logger"
 	"database/sql"
 	"github.com/go-sql-driver/mysql"
 	"time"
@@ -13,6 +14,7 @@ type Connection struct {
 func (c *Connection) GetConnection() error {
 	jst, err := time.LoadLocation("Asia/Tokyo")
 	if err != nil {
+		logger.Error(err.Error())
 		return err
 	}
 
@@ -29,6 +31,7 @@ func (c *Connection) GetConnection() error {
 	db, err := sql.Open("mysql", conf.FormatDSN())
 
 	if err != nil {
+		logger.Error(err.Error())
 		return err
 	} else {
 		c.Conn = db
