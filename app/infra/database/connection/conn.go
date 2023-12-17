@@ -11,31 +11,40 @@ type Connection struct {
 	Conn *sql.DB
 }
 
-func (c *Connection) GetConnection() error {
+func NewConnection() Connection {
+	c, err := getConnection()
+
+	if err != nil {
+		panic(err)
+	}
+
+	return Connection{Conn: c}
+}
+
+func getConnection() (*sql.DB, error) {
 	jst, err := time.LoadLocation("Asia/Tokyo")
 	if err != nil {
 		logger.Error(err.Error())
-		return err
+		return nil, err
 	}
 
 	conf := mysql.Config{
-		DBName:    "bowling_score",
-		User:      "user",
-		Passwd:    "password",
-		Addr:      "db:3306",
-		Net:       "tcp",
-		Collation: "utf8mb4_unicode_ci",
-		Loc:       jst,
+		DBName:               "bowling_score",
+		User:                 "docker",
+		Passwd:               "docker",
+		Addr:                 "db:3306",
+		Net:                  "tcp",
+		Collation:            "utf8mb4_unicode_ci",
+		Loc:                  jst,
+		AllowNativePasswords: true,
 	}
 
-	db, err := sql.Open("mysql", conf.FormatDSN())
+	conn, err := sql.Open("mysql", conf.FormatDSN())
 
 	if err != nil {
 		logger.Error(err.Error())
-		return err
-	} else {
-		c.Conn = db
+		return nil, err
 	}
 
-	return nil
+	return conn, nil
 }

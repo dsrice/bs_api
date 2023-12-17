@@ -12,11 +12,13 @@ type ConnectionSuite struct {
 }
 
 func (s *ConnectionSuite) TestGetConnection() {
-	conn := connection.Connection{}
-	err := conn.GetConnection()
+	conn := connection.NewConnection()
+
+	assert.NotNil(s.T(), conn.Conn)
+
+	_, err := conn.Conn.Query("select * from schema_migrations")
 
 	assert.Nil(s.T(), err)
-	assert.NotNil(s.T(), conn.Conn)
 }
 
 func TestConnectionSuite(t *testing.T) {
