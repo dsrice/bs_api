@@ -2,6 +2,8 @@ version: "3"
 services:
   b-api:
     build: .
+    ports:
+      - "1323:1323"
     depends_on:
       - db
     volumes:
@@ -11,8 +13,10 @@ services:
   db:
     image: mysql:5.7
     environment:
-      - MYSQL_DATABASE=test_db
+      - MYSQL_DATABASE=bowling_score
       - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_USER=docker
+      - MYSQL_PASSWORD=docker
     command: >
       --character-set-server=utf8mb4
       --collation-server=utf8mb4_general_ci
@@ -20,7 +24,9 @@ services:
       --innodb_file_format=BARRACUDA
       --innodb_large_prefix=1
     ports:
-      - 3306:3306
+      - "3306:3306"
+    volumes:
+      - ./db/data:/var/lib/mysql
 
   b-api-ui:
     image: redocly/redoc
