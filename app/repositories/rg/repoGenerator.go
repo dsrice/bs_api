@@ -28,6 +28,7 @@ func createRi(cg *genarator.CreateGenerator) error {
 	f.Type().Id(cg.In).Interface()
 
 	fmt.Printf("%#v", f)
+	//	f.Save(path.Join(cg.BasePath, "ri", cg.Fn+".go"))
 
 	return nil
 }

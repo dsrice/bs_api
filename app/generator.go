@@ -1,8 +1,10 @@
 package main
 
 import (
+	"app/controllers/cg"
 	"app/infra/genarator"
 	"app/repositories/rg"
+	"app/usecases/ug"
 	"log"
 	"os"
 )
@@ -19,7 +21,7 @@ func main() {
 		os.Exit(9)
 	}
 
-	cg := genarator.CreateGenerator{
+	cgs := genarator.CreateGenerator{
 		Fn: os.Args[2],
 		In: os.Args[3],
 	}
@@ -29,11 +31,11 @@ func main() {
 
 	switch ts {
 	case controller:
-
+		err = cg.CreateController(&cgs)
 	case usecase:
-
+		err = ug.CreateUsecase(&cgs)
 	case repo:
-		err = rg.CreateRepository(&cg)
+		err = rg.CreateRepository(&cgs)
 	}
 
 	if err != nil {
