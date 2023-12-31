@@ -2,8 +2,8 @@ package ug
 
 import (
 	"app/infra/genarator"
-	"fmt"
 	"github.com/dave/jennifer/jen"
+	"path"
 )
 
 func CreateUsecase(cg *genarator.CreateGenerator) error {
@@ -27,8 +27,8 @@ func createCi(cg *genarator.CreateGenerator) error {
 
 	f.Type().Id(cg.In).Interface()
 
-	fmt.Printf("%#v", f)
-	//	f.Save(path.Join(cg.BasePath, "ui", cg.Fn+".go"))
+	//	fmt.Printf("%#v", f)
+	f.Save(path.Join(cg.BasePath, "ui", cg.Fn+".go"))
 
 	return nil
 }
@@ -40,13 +40,13 @@ func createImp(cg *genarator.CreateGenerator) error {
 
 	f.Type().Id(cg.Fn + "Imp").Struct()
 
-	f.Func().Id("New"+cg.In).Params().Qual("app/usecases/ci", cg.In).Block(
+	f.Func().Id("New"+cg.In).Params().Qual("app/usecases/ui", cg.In).Block(
 		jen.Return(jen.Op("&").Id(cg.Fn + "Imp").Values()),
 	)
 
-	fmt.Printf("%#v", f)
+	//	fmt.Printf("%#v", f)
 
-	//f.Save(path.Join(cg.BasePath, cg.Fn+".go"))
+	f.Save(path.Join(cg.BasePath, cg.Fn+".go"))
 
 	return nil
 }

@@ -47,7 +47,7 @@ func createImp(cg *genarator.CreateGenerator) error {
 		jen.Id("con").Op("*").Qual("app/infra/database/connection", "Connection"),
 	).Qual("app/repositories/ri", cg.In).Block(
 		jen.Return(jen.Op("&").Id(cg.Fn + "Imp").Values(
-			jen.Dict{jen.Id("con"): jen.Id("con")}),
+			jen.Dict{jen.Id("con"): jen.Id("con.Con")}),
 		),
 	)
 

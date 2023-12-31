@@ -2,21 +2,36 @@ package controllers
 
 import (
 	"app/controllers/ci"
-	"app/repositories/ri"
+	"app/controllers/requestparameter"
+	"app/infra/logger"
+	"app/infra/response"
+	"app/usecases/ui"
 	"github.com/labstack/echo/v4"
 	"net/http"
 )
 
 type loginControllerImp struct {
-	repo ri.UserRepository
+	login ui.LoginUsecase
 }
 
-func NewLoginController(repo ri.UserRepository) ci.LoginController {
+func NewLoginController(uc ui.InUsecase) ci.LoginController {
 	return &loginControllerImp{
-		repo: repo,
+		login: uc.Login,
 	}
 }
 
-func (ct *loginControllerImp) Get(c echo.Context) error {
+func (ct *loginControllerImp) Login(c echo.Context) error {
+	param := requestparameter.Login{}
+	if err := c.Bind(param); err != nil {
+		return err
+	}
+
+	_, err := ct.login.GetUser(param.LoginID)
+
+	if err != nil {
+		logger.Error(err.Error())
+		return response.ErrorResponse(c, "NoUser")
+	}
+
 	return c.String(http.StatusOK, "Hellow World")
 }

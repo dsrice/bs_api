@@ -28,7 +28,3 @@ func (s *Server) Start() {
 
 	s.echo.Logger.Fatal(s.echo.Start(":1323"))
 }
-
-func (s *Server) routing() {
-	s.echo.GET("/", s.Login.Get)
-}
