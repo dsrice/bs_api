@@ -1,4 +1,4 @@
-package error
+package errormessage
 
 import (
 	"app/infra/logger"
@@ -25,9 +25,9 @@ type EInfo struct {
 
 func SettingError() map[int]EInfo {
 	infomap := map[int]EInfo{}
-	d, err := os.ReadFile("./error.xml")
+	d, err := os.ReadFile("/go/src/app/infra/errormessage/error.xml")
 	if err != nil {
-		logger.Error("エラーファイルの読み出しに失敗しました")
+		logger.Error("エラーファイルの読み込みに失敗しました")
 		return infomap
 	}
 
