@@ -1,7 +1,7 @@
 package main
 
 import (
-	"app/infra/di"
+	"app/di"
 	"app/infra/server"
 	"go.uber.org/dig"
 )
