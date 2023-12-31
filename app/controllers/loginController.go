@@ -21,24 +21,28 @@ func NewLoginController(uc ui.InUsecase) ci.LoginController {
 	}
 }
 
-func Validate(param requestparameter.Login) error {
-
-	return nil
-}
-
 func (ct *loginControllerImp) Login(c echo.Context) error {
+	logger.Debug("login API Start")
 	param := requestparameter.Login{}
 	if err := c.Bind(&param); err != nil {
 		logger.Error(err.Error())
 		return response.ErrorResponse(c, errormessage.BadRequest)
 	}
 
-	_, err := ct.login.GetUser(param.LoginID)
+	err := ct.login.Validate(param)
+
+	if err != nil {
+		logger.Error(err.Error())
+		return response.ErrorResponse(c, errormessage.BadRequest)
+	}
+
+	_, err = ct.login.GetUser(param.LoginID)
 
 	if err != nil {
 		logger.Error(err.Error())
 		return response.ErrorResponse(c, errormessage.FailAuth)
 	}
 
+	logger.Debug("login API End")
 	return c.String(http.StatusOK, "Hellow World")
 }

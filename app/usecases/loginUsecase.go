@@ -1,9 +1,12 @@
 package usecases
 
 import (
+	"app/controllers/requestparameter"
 	"app/entities"
+	"app/infra/logger"
 	"app/repositories/ri"
 	"app/usecases/ui"
+	"fmt"
 )
 
 type loginUsecaseImp struct {
@@ -14,6 +17,17 @@ func NewLoginUsecase(repo ri.InRepository) ui.LoginUsecase {
 	return &loginUsecaseImp{
 		ur: repo.UserRepo,
 	}
+}
+
+func (u *loginUsecaseImp) Validate(param requestparameter.Login) error {
+
+	if len(param.LoginID) == 0 || len(param.Password) == 0 {
+		err := fmt.Errorf("ログインIDもしくはパスワードがありません")
+		logger.Error(err.Error())
+		return err
+	}
+
+	return nil
 }
 
 func (u *loginUsecaseImp) GetUser(loginID string) (*entities.UserEntity, error) {
