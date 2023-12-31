@@ -27,7 +27,6 @@ func createCi(cg *genarator.CreateGenerator) error {
 
 	f.Type().Id(cg.In).Interface()
 
-	//	fmt.Printf("%#v", f)
 	f.Save(path.Join(cg.BasePath, "ui", cg.Fn+".go"))
 
 	return nil
@@ -46,8 +45,6 @@ func createImp(cg *genarator.CreateGenerator) error {
 	).Qual("app/usecases/ui", cg.In).Block(
 		jen.Return(jen.Op("&").Id(cg.Fn + "Imp").Values()),
 	)
-
-	//	fmt.Printf("%#v", f)
 
 	f.Save(path.Join(cg.BasePath, cg.Fn+".go"))
 
