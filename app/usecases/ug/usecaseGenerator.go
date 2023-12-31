@@ -37,10 +37,13 @@ func createImp(cg *genarator.CreateGenerator) error {
 	f := jen.NewFile("usecases")
 
 	f.ImportName("app/usecases/ui", "ui")
+	f.ImportName("app/repositoriesri", "ri")
 
 	f.Type().Id(cg.Fn + "Imp").Struct()
 
-	f.Func().Id("New"+cg.In).Params().Qual("app/usecases/ui", cg.In).Block(
+	f.Func().Id("New"+cg.In).Params(
+		jen.Id("repo").Qual("app/repositories/ri", "InRepository"),
+	).Qual("app/usecases/ui", cg.In).Block(
 		jen.Return(jen.Op("&").Id(cg.Fn + "Imp").Values()),
 	)
 
