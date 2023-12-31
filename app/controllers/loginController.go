@@ -3,6 +3,7 @@ package controllers
 import (
 	"app/controllers/ci"
 	"app/controllers/requestparameter"
+	"app/infra/errormessage"
 	"app/infra/logger"
 	"app/infra/response"
 	"app/usecases/ui"
@@ -20,17 +21,23 @@ func NewLoginController(uc ui.InUsecase) ci.LoginController {
 	}
 }
 
+func Validate(param requestparameter.Login) error {
+
+	return nil
+}
+
 func (ct *loginControllerImp) Login(c echo.Context) error {
 	param := requestparameter.Login{}
-	if err := c.Bind(param); err != nil {
-		return err
+	if err := c.Bind(&param); err != nil {
+		logger.Error(err.Error())
+		return response.ErrorResponse(c, errormessage.BadRequest)
 	}
 
 	_, err := ct.login.GetUser(param.LoginID)
 
 	if err != nil {
 		logger.Error(err.Error())
-		return response.ErrorResponse(c, "NoUser")
+		return response.ErrorResponse(c, errormessage.FailAuth)
 	}
 
 	return c.String(http.StatusOK, "Hellow World")
