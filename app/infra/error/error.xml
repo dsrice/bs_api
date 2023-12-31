@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<errors category="1">
+    <error>
+        <code>1000</code>
+        <status>400</status>
+        <message>リクエストパラメータ異常</message>
+    </error>
+    <error>
+        <code>1001</code>
+        <status>401</status>
+        <message>認証失敗</message>
+    </error>
+
+
+    <error>
+        <code>9999</code>
+        <status>500</status>
+        <message>システムエラー</message>
+    </error>
+</errors>
