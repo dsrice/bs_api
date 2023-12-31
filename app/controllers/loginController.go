@@ -2,7 +2,7 @@ package controllers
 
 import (
 	"app/controllers/ci"
-	"app/controllers/requestparameter"
+	"app/controllers/rqp"
 	"app/infra/errormessage"
 	"app/infra/logger"
 	"app/infra/response"
@@ -23,7 +23,7 @@ func NewLoginController(uc ui.InUsecase) ci.LoginController {
 
 func (ct *loginControllerImp) Login(c echo.Context) error {
 	logger.Debug("login API Start")
-	param := requestparameter.Login{}
+	param := rqp.Login{}
 	if err := c.Bind(&param); err != nil {
 		logger.Error(err.Error())
 		return response.ErrorResponse(c, errormessage.BadRequest)

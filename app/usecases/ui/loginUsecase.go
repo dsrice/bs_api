@@ -1,11 +1,11 @@
 package ui
 
 import (
-	"app/controllers/requestparameter"
+	"app/controllers/rqp"
 	"app/entities"
 )
 
 type LoginUsecase interface {
-	Validate(param requestparameter.Login) error
+	Validate(param rqp.Login) error
 	GetUser(loginID string) (*entities.UserEntity, error)
 }

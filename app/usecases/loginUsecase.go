@@ -1,7 +1,7 @@
 package usecases
 
 import (
-	"app/controllers/requestparameter"
+	"app/controllers/rqp"
 	"app/entities"
 	"app/infra/logger"
 	"app/repositories/ri"
@@ -19,7 +19,7 @@ func NewLoginUsecase(repo ri.InRepository) ui.LoginUsecase {
 	}
 }
 
-func (u *loginUsecaseImp) Validate(param requestparameter.Login) error {
+func (u *loginUsecaseImp) Validate(param rqp.Login) error {
 
 	if len(param.LoginID) == 0 || len(param.Password) == 0 {
 		err := fmt.Errorf("ログインIDもしくはパスワードがありません")
