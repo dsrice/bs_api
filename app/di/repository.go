@@ -7,4 +7,5 @@ import (
 
 func provideRepository(c *dig.Container) {
 	setProvide(c, repositories.NewUserRepository)
+	setProvide(c, repositories.NewTokenRepository)
 }

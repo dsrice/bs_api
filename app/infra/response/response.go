@@ -6,6 +6,10 @@ import (
 	"net/http"
 )
 
+func SccessResponse(c echo.Context, res interface{}) error {
+	return c.JSON(http.StatusOK, res)
+}
+
 func ErrorResponse(c echo.Context, code int) error {
 	emap := errormessage.SettingError()
 

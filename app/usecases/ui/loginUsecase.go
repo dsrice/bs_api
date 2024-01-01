@@ -8,4 +8,5 @@ import (
 type LoginUsecase interface {
 	Validate(param rqp.Login) error
 	GetUser(loginID string) (*entities.UserEntity, error)
+	GetToken(user *entities.UserEntity) (*entities.TokenEntity, error)
 }

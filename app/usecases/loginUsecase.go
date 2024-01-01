@@ -11,11 +11,13 @@ import (
 
 type loginUsecaseImp struct {
 	ur ri.UserRepository
+	tr ri.TokenRepository
 }
 
 func NewLoginUsecase(repo ri.InRepository) ui.LoginUsecase {
 	return &loginUsecaseImp{
 		ur: repo.UserRepo,
+		tr: repo.TokenRepository,
 	}
 }
 
@@ -38,4 +40,14 @@ func (u *loginUsecaseImp) GetUser(loginID string) (*entities.UserEntity, error) 
 	}
 
 	return user, nil
+}
+
+func (u *loginUsecaseImp) GetToken(user *entities.UserEntity) (*entities.TokenEntity, error) {
+	token, err := u.tr.SetToken(*user)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return token, nil
 }

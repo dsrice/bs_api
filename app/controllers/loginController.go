@@ -3,12 +3,12 @@ package controllers
 import (
 	"app/controllers/ci"
 	"app/controllers/rqp"
+	"app/controllers/rsp"
 	"app/infra/errormessage"
 	"app/infra/logger"
 	"app/infra/response"
 	"app/usecases/ui"
 	"github.com/labstack/echo/v4"
-	"net/http"
 )
 
 type loginControllerImp struct {
@@ -36,13 +36,22 @@ func (ct *loginControllerImp) Login(c echo.Context) error {
 		return response.ErrorResponse(c, errormessage.BadRequest)
 	}
 
-	_, err = ct.login.GetUser(param.LoginID)
+	user, err := ct.login.GetUser(param.LoginID)
 
 	if err != nil {
 		logger.Error(err.Error())
 		return response.ErrorResponse(c, errormessage.FailAuth)
 	}
 
+	token, err := ct.login.GetToken(user)
+	if err != nil {
+		logger.Error(err.Error())
+		return response.ErrorResponse(c, errormessage.SystemError)
+	}
+
+	res := rsp.Login{}
+	res.ConvertResponse(token)
+
 	logger.Debug("login API End")
-	return c.String(http.StatusOK, "Hellow World")
+	return response.SccessResponse(c, res)
 }
