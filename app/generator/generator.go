@@ -7,6 +7,7 @@ import (
 	"app/usecases/ug"
 	"log"
 	"os"
+	"strings"
 )
 
 const (
@@ -22,9 +23,10 @@ func main() {
 	}
 
 	cgs := genarator.CreateGenerator{
-		Fn: os.Args[2],
-		In: os.Args[3],
+		In: os.Args[2],
 	}
+
+	cgs.Fn = createImpName(cgs.In)
 
 	ts := os.Args[1]
 	var err error
@@ -41,4 +43,12 @@ func main() {
 	if err != nil {
 		log.Fatal(err.Error())
 	}
+}
+
+func createImpName(name string) string {
+	sName := strings.Split(name, "")
+
+	sName[0] = strings.ToLower(sName[0])
+
+	return strings.Join(sName, "") + "Imp"
 }
