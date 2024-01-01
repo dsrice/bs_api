@@ -1,3 +1,7 @@
 package ri
 
-type TokenRepository interface{}
+import "app/entities"
+
+type TokenRepository interface {
+	SetToken(user entities.UserEntity) (*entities.TokenEntity, error)
+}

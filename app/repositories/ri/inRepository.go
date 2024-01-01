@@ -4,5 +4,6 @@ import "go.uber.org/dig"
 
 type InRepository struct {
 	dig.In
-	UserRepo UserRepository
+	UserRepo        UserRepository
+	TokenRepository TokenRepository
 }
