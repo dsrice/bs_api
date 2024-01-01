@@ -2,7 +2,10 @@ package cg
 
 import (
 	"app/infra/genarator"
+	"bufio"
+	"fmt"
 	"github.com/dave/jennifer/jen"
+	"os"
 	"path"
 )
 
@@ -15,6 +18,11 @@ func CreateController(cg *genarator.CreateGenerator) error {
 	}
 
 	err = createImp(cg)
+	if err != nil {
+		return err
+	}
+
+	err = addInterface(cg)
 	if err != nil {
 		return err
 	}
@@ -48,6 +56,45 @@ func createImp(cg *genarator.CreateGenerator) error {
 	)
 
 	f.Save(path.Join(cg.BasePath, cg.Fn+".go"))
+
+	return nil
+}
+
+func addInterface(cg *genarator.CreateGenerator) error {
+	path := path.Join(cg.BasePath, "ci", "inController.go")
+
+	f, err := os.OpenFile(path, os.O_RDWR|os.O_CREATE, 0775)
+
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+
+	scanner := bufio.NewScanner(f)
+	lines := []string{}
+
+	for scanner.Scan() {
+		// ここで一行ずつ処理
+		t := scanner.Text()
+
+		if t == "}" {
+			add := fmt.Sprintf("	%s %s", cg.In, cg.In)
+			lines = append(lines, add)
+		}
+
+		lines = append(lines, t)
+	}
+
+	f, err = os.OpenFile(path, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0775)
+
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+
+	for _, line := range lines {
+		f.WriteString(line + "\n")
+	}
 
 	return nil
 }
