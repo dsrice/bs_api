@@ -2,8 +2,8 @@ package rg
 
 import (
 	"app/infra/genarator"
-	"fmt"
 	"github.com/dave/jennifer/jen"
+	"path"
 )
 
 func CreateRepository(cg *genarator.CreateGenerator) error {
@@ -27,8 +27,7 @@ func createRi(cg *genarator.CreateGenerator) error {
 
 	f.Type().Id(cg.In).Interface()
 
-	fmt.Printf("%#v", f)
-	//	f.Save(path.Join(cg.BasePath, "ri", cg.Fn+".go"))
+	f.Save(path.Join(cg.BasePath, "ri", cg.In+".go"))
 
 	return nil
 }
@@ -39,21 +38,21 @@ func createImp(cg *genarator.CreateGenerator) error {
 	f.ImportName("app/infra/database/connection", "connection")
 	f.ImportName("app/repositories/ri", "ri")
 
-	f.Type().Id(cg.Fn + "Imp").Struct(
+	f.Type().Id(cg.Fn).Struct(
 		jen.Id("con").Op("*").Qual("app/infra/database/connection", "Connection"),
 	)
 
 	f.Func().Id("New"+cg.In).Params(
 		jen.Id("con").Op("*").Qual("app/infra/database/connection", "Connection"),
 	).Qual("app/repositories/ri", cg.In).Block(
-		jen.Return(jen.Op("&").Id(cg.Fn + "Imp").Values(
+		jen.Return(jen.Op("&").Id(cg.Fn).Values(
 			jen.Dict{jen.Id("con"): jen.Id("con.Con")}),
 		),
 	)
 
-	fmt.Printf("%#v", f)
+	// fmt.Printf("%#v", f)
 
-	//f.Save(path.Join(cg.BasePath, cg.Fn+".go"))
+	f.Save(path.Join(cg.BasePath, cg.Fn+".go"))
 
 	return nil
 }

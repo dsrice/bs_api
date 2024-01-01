@@ -27,7 +27,7 @@ func createCi(cg *genarator.CreateGenerator) error {
 
 	f.Type().Id(cg.In).Interface()
 
-	f.Save(path.Join(cg.BasePath, "ui", cg.Fn+".go"))
+	f.Save(path.Join(cg.BasePath, "ui", cg.In+".go"))
 
 	return nil
 }
@@ -38,12 +38,12 @@ func createImp(cg *genarator.CreateGenerator) error {
 	f.ImportName("app/usecases/ui", "ui")
 	f.ImportName("app/repositoriesri", "ri")
 
-	f.Type().Id(cg.Fn + "Imp").Struct()
+	f.Type().Id(cg.Fn).Struct()
 
 	f.Func().Id("New"+cg.In).Params(
 		jen.Id("repo").Qual("app/repositories/ri", "InRepository"),
 	).Qual("app/usecases/ui", cg.In).Block(
-		jen.Return(jen.Op("&").Id(cg.Fn + "Imp").Values()),
+		jen.Return(jen.Op("&").Id(cg.Fn).Values()),
 	)
 
 	f.Save(path.Join(cg.BasePath, cg.Fn+".go"))
