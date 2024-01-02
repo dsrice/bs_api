@@ -11,6 +11,7 @@ func BuildContainer(c *dig.Container) {
 	setProvide(c, server.NewServer)
 	setProvide(c, connection.NewConnection)
 	provideController(c)
+	provideUsecase(c)
 	provideRepository(c)
 }
 

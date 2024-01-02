@@ -36,6 +36,7 @@ func getConnection() (*sql.DB, error) {
 		Net:                  "tcp",
 		Collation:            "utf8mb4_unicode_ci",
 		Loc:                  jst,
+		ParseTime:            true,
 		AllowNativePasswords: true,
 	}
 

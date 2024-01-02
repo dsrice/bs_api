@@ -2,21 +2,63 @@ package controllers
 
 import (
 	"app/controllers/ci"
-	"app/repositories/ri"
+	"app/controllers/rqp"
+	"app/controllers/rsp"
+	"app/infra/errormessage"
+	"app/infra/logger"
+	"app/infra/response"
+	"app/usecases/ui"
+	"fmt"
 	"github.com/labstack/echo/v4"
-	"net/http"
 )
 
 type loginControllerImp struct {
-	repo ri.UserRepository
+	login ui.LoginUsecase
 }
 
-func NewLoginController(repo ri.UserRepository) ci.LoginController {
+func NewLoginController(uc ui.InUsecase) ci.LoginController {
 	return &loginControllerImp{
-		repo: repo,
+		login: uc.Login,
 	}
 }
 
-func (ct *loginControllerImp) Get(c echo.Context) error {
-	return c.String(http.StatusOK, "Hellow World")
+func (ct *loginControllerImp) Login(c echo.Context) error {
+	logger.Debug("login API Start")
+	param := rqp.Login{}
+	if err := c.Bind(&param); err != nil {
+		logger.Error(err.Error())
+		return response.ErrorResponse(c, errormessage.BadRequest)
+	}
+
+	if ev := c.Validate(param); ev != nil {
+		logger.Error(fmt.Sprintf("param: %s", param))
+		logger.Error(ev.Error())
+		return response.ErrorResponse(c, errormessage.BadRequest)
+	}
+
+	err := ct.login.Validate(param)
+
+	if err != nil {
+		logger.Error(err.Error())
+		return response.ErrorResponse(c, errormessage.BadRequest)
+	}
+
+	user, err := ct.login.GetUser(param.LoginID)
+
+	if err != nil {
+		logger.Error(err.Error())
+		return response.ErrorResponse(c, errormessage.FailAuth)
+	}
+
+	token, err := ct.login.GetToken(user)
+	if err != nil {
+		logger.Error(err.Error())
+		return response.ErrorResponse(c, errormessage.SystemError)
+	}
+
+	res := rsp.Login{}
+	res.ConvertResponse(token)
+
+	logger.Debug("login API End")
+	return response.SccessResponse(c, res)
 }
