@@ -65,6 +65,18 @@ func createImp(cg *genarator.CreateGenerator) error {
 	return nil
 }
 
+func createMock(cg *genarator.CreateGenerator) error {
+	f := jen.NewFile("rmock")
+
+	f.Type().Id(cg.Mn).Struct(
+		jen.Qual("github.com/stretchr/testify/mock", "Mock"),
+	)
+
+	f.Save(path.Join(cg.BasePath, "rmock", cg.Mn+".go"))
+
+	return nil
+}
+
 func addInterface(cg *genarator.CreateGenerator) error {
 	path := path.Join(cg.BasePath, "ri", "inRepository.go")
 

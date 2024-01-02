@@ -9,7 +9,7 @@ type TokenRepositoryMock struct {
 	mock.Mock
 }
 
-func (_m *UserRepositoryMock) SetToken(user entities.UserEntity) (*entities.TokenEntity, error) {
+func (_m *TokenRepositoryMock) SetToken(user entities.UserEntity) (*entities.TokenEntity, error) {
 	ret := _m.Called(user)
 	return ret.Get(0).(*entities.TokenEntity), ret.Error(1)
 }

@@ -27,6 +27,7 @@ func main() {
 	}
 
 	cgs.Fn = createImpName(cgs.In)
+	cgs.Mn = createMockName(cgs.In)
 
 	ts := os.Args[1]
 	var err error
@@ -51,4 +52,8 @@ func createImpName(name string) string {
 	sName[0] = strings.ToLower(sName[0])
 
 	return strings.Join(sName, "") + "Imp"
+}
+
+func createMockName(name string) string {
+	return name + "Mock"
 }

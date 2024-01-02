@@ -104,11 +104,41 @@ func TestGetUserLoginUsecaseSuite(t *testing.T) {
 
 type GetTokenLoginUsecaseSuite struct {
 	suite.Suite
-	trepo *rmock.UserRepositoryMock
+	trepo *rmock.TokenRepositoryMock
 }
 
 func (s *GetTokenLoginUsecaseSuite) SetupSuite() {
-	s.urepo = new(rmock.UserRepositoryMock)
+	s.trepo = new(rmock.TokenRepositoryMock)
+}
+
+func (s *GetTokenLoginUsecaseSuite) TestSuccess() {
+	user := entities.UserEntity{UserID: 1, LoginID: "t1"}
+	token := entities.TokenEntity{User: user}
+	s.trepo.On("SetToken", user).Return(&token, nil)
+
+	repo := ri.InRepository{TokenRepository: s.trepo}
+
+	uc := usecases.NewLoginUsecase(repo)
+
+	result, err := uc.GetToken(&user)
+
+	assert.Nil(s.T(), err)
+	assert.Equal(s.T(), result.User, user)
+}
+
+func (s *GetTokenLoginUsecaseSuite) TestFail() {
+	user := entities.UserEntity{UserID: 2, LoginID: "t2"}
+	token := entities.TokenEntity{User: user}
+	s.trepo.On("SetToken", user).Return(&token, fmt.Errorf("error test"))
+
+	repo := ri.InRepository{TokenRepository: s.trepo}
+
+	uc := usecases.NewLoginUsecase(repo)
+
+	result, err := uc.GetToken(&user)
+
+	assert.Nil(s.T(), result)
+	assert.Equal(s.T(), err.Error(), "error test")
 }
 
 func TestGetTokenLoginUsecaseSuite(t *testing.T) {
