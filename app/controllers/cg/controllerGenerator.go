@@ -22,6 +22,11 @@ func CreateController(cg *genarator.CreateGenerator) error {
 		return err
 	}
 
+	err = createImpTest(cg)
+	if err != nil {
+		return err
+	}
+
 	err = addInterface(cg)
 	if err != nil {
 		return err
@@ -56,6 +61,14 @@ func createImp(cg *genarator.CreateGenerator) error {
 	)
 
 	f.Save(path.Join(cg.BasePath, cg.Fn+".go"))
+
+	return nil
+}
+
+func createImpTest(cg *genarator.CreateGenerator) error {
+	f := jen.NewFile("controllers_test")
+
+	f.Save(path.Join(cg.BasePath, cg.Fn+"_test.go"))
 
 	return nil
 }
