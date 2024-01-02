@@ -8,6 +8,7 @@ import (
 	"app/infra/logger"
 	"app/infra/response"
 	"app/usecases/ui"
+	"fmt"
 	"github.com/labstack/echo/v4"
 )
 
@@ -26,6 +27,12 @@ func (ct *loginControllerImp) Login(c echo.Context) error {
 	param := rqp.Login{}
 	if err := c.Bind(&param); err != nil {
 		logger.Error(err.Error())
+		return response.ErrorResponse(c, errormessage.BadRequest)
+	}
+
+	if ev := c.Validate(param); ev != nil {
+		logger.Error(fmt.Sprintf("param: %s", param))
+		logger.Error(ev.Error())
 		return response.ErrorResponse(c, errormessage.BadRequest)
 	}
 
