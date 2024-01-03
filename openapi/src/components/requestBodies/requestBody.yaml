@@ -1,4 +1,4 @@
 login_post:
   $ref: "./login_post.yaml"
-user_get:
-  $ref: "./user_get.yaml"
+user_post:
+  $ref: "./user_post.yaml"

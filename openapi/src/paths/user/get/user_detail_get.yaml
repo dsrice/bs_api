@@ -1,6 +1,6 @@
 tags:
   - user
-operationId: user
+operationId: user_detail
 summary: ユーザ取得
 parameters:
   - name: userID

@@ -1,0 +1,14 @@
+type: object
+properties:
+  id:
+    type: int
+    description: "ユーザID"
+    example: 1
+  name:
+    type: string
+    description: "名称"
+    example: "test"
+  main:
+    type: string
+    description: "メールアドレス"
+    example: "test@test"

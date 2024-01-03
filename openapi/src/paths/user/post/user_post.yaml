@@ -1,0 +1,13 @@
+tags:
+  - user
+operationId: user_regist
+summary: ユーザ登録
+requestBody:
+  $ref: "#/components/requestBodies/user_post"
+responses:
+  '200':
+    $ref: "./user_post_200.yaml"
+  '404':
+    $ref: "#/components/responses/404NotFound"
+  '500':
+    $ref: "#/components/responses/500InternalError"
