@@ -3,7 +3,7 @@ tags:
 operationId: user_update
 summary: ユーザ更新
 parameters:
-  - name: userID
+  - name: UserID
     in: path
     required: true
     description: "ユーザID"

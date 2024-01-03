@@ -3,7 +3,7 @@ tags:
 operationId: user_delete
 summary: ユーザ削除
 parameters:
-  - name: userID
+  - name: UserID
     in: path
     required: true
     description: "ユーザID"
