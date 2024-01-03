@@ -1,6 +1,6 @@
 create table users (
     id int not null  PRIMARY KEY,
-    login_id varchar(10) not null ,
+    login_id varchar(10) not null UNIQUE,
     name varchar(50),
     password varchar(100) not null ,
     mail varchar(100),
