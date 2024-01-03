@@ -1,0 +1,8 @@
+get:
+  $ref: "./get/user_detail_get.yaml"
+
+patch:
+  $ref: "./patch/user_patch.yaml"
+
+delete:
+  $ref: "./delete/user_delete.yaml"

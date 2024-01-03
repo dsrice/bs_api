@@ -1,0 +1,5 @@
+type: object
+properties:
+  result:
+    type: boolean
+    description: "削除結果"

@@ -1,0 +1,7 @@
+type: object
+properties:
+  users:
+    type: array
+    description: ユーザ一覧
+    items:
+      ref: "./user_detail.yaml"

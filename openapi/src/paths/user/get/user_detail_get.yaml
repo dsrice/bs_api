@@ -1,0 +1,18 @@
+tags:
+  - user
+operationId: user_detail
+summary: ユーザ取得
+parameters:
+  - name: UserID
+    in: path
+    required: true
+    description: "ユーザID"
+    schema:
+      type: int
+responses:
+  '200':
+    $ref: "./user_detail_get_200.yaml"
+  '404':
+    $ref: "#/components/responses/404NotFound"
+  '500':
+    $ref: "#/components/responses/500InternalError"
