@@ -1,5 +1,10 @@
 auth:
   $ref: "./auth.yaml"
+user:
+  $ref: "./user.yaml"
+user_detail:
+  $ref: "./user_detail.yaml"
+
 notFoundError:
   $ref: "./notFoundError.yaml"
 internalError:

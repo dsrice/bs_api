@@ -1,0 +1,11 @@
+tags:
+  - user
+operationId: user
+summary: ユーザ一覧
+responses:
+  '200':
+    $ref: "./user_get_200.yaml"
+  '404':
+    $ref: "#/components/responses/404NotFound"
+  '500':
+    $ref: "#/components/responses/500InternalError"

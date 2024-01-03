@@ -1,0 +1,20 @@
+type: object
+properties:
+  users:
+    type: array
+    description: ユーザ一覧
+    items:
+      type: object
+      properties:
+        id:
+          type: int
+          description: "ユーザID"
+          example: 1
+        name:
+          type: string
+          description: "名称"
+          example: "test"
+        main:
+          type: string
+          description: "メールアドレス"
+          example: "test@test"

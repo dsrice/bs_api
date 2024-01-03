@@ -1,0 +1,2 @@
+get:
+  $ref: "./get/user_detail_get.yaml"

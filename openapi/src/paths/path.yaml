@@ -1,2 +1,8 @@
 /login:
   $ref: "./login/login.yaml"
+
+/user:
+  $ref: "./user/user.yaml"
+
+/user/{userID}:
+  $ref: "./user/user_detail.yaml"
