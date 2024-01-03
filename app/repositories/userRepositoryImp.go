@@ -9,6 +9,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"github.com/volatiletech/sqlboiler/boil"
 )
 
 type userRepositoryImp struct {
@@ -39,4 +40,19 @@ func (r *userRepositoryImp) GetUser(loginID string) (*entities.UserEntity, error
 	u.ConvertUser(ul[0])
 
 	return &u, nil
+}
+
+func (r *userRepositoryImp) RegistUser(user entities.UserEntity) error {
+	logger.Debug("RegistUser Repository start")
+	m := user.ConvertUserModel()
+
+	err := m.Insert(context.Background(), r.con, boil.Infer())
+
+	if err != nil {
+		logger.Error(err.Error())
+		return err
+	}
+
+	logger.Debug("RegistUser Repository end")
+	return nil
 }
