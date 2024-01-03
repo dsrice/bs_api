@@ -2,4 +2,4 @@ description: "成功"
 content:
   application/json:
     schema:
-      $ref: "#/components/schemas/user_detail"
+      $ref: "#/components/schemas/delete"

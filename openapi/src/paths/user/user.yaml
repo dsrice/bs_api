@@ -1,2 +1,5 @@
 get:
   $ref: "./get/user_get.yaml"
+
+post:
+  $ref: "./post/user_post.yaml"

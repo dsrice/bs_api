@@ -1,5 +1,8 @@
 get:
   $ref: "./get/user_detail_get.yaml"
 
-post:
-  $ref: "./post/user_post.yaml"
+patch:
+  $ref: "./patch/user_patch.yaml"
+
+delete:
+  $ref: "./delete/user_delete.yaml"

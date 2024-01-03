@@ -4,9 +4,9 @@ user:
   $ref: "./user.yaml"
 user_detail:
   $ref: "./user_detail.yaml"
-user_post:
-  $ref: "./user_post.yaml"
 
+delete:
+  $ref: "./delete.yaml"
 notFoundError:
   $ref: "./notFoundError.yaml"
 internalError:
