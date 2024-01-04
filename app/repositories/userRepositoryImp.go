@@ -8,7 +8,6 @@ import (
 	"app/repositories/ri"
 	"context"
 	"database/sql"
-	"fmt"
 	"github.com/volatiletech/sqlboiler/boil"
 )
 
@@ -31,9 +30,8 @@ func (r *userRepositoryImp) GetUser(loginID string) (*entities.UserEntity, error
 	}
 
 	if len(ul) != 1 {
-		err = fmt.Errorf("対象ユーザが見つかりませんでした")
-		logger.Error(err.Error())
-		return nil, err
+		logger.Debug("ユーザーが見つかりませんでした")
+		return nil, nil
 	}
 
 	u := entities.UserEntity{}
