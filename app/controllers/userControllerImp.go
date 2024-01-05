@@ -9,7 +9,6 @@ import (
 	"app/usecases/ui"
 	"fmt"
 	"github.com/labstack/echo/v4"
-	"strconv"
 )
 
 type userControllerImp struct {
@@ -38,11 +37,15 @@ func (ct *userControllerImp) RegistUser(c echo.Context) error {
 
 	err := ct.userUC.RegistValidate(param)
 	if err != nil {
-		if err.Error() == strconv.Itoa(errormessage.UsedLoginID) {
-			return response.ErrorResponse(c, errormessage.UsedLoginID)
-		} else {
-			return response.ErrorResponse(c, errormessage.BadRequest)
-		}
+		return response.ErrorResponse(c, errormessage.BadRequest)
+	}
+
+	uc, err := ct.userUC.CheckUser(param.LoginID)
+
+	if err != nil {
+		return response.ErrorResponse(c, errormessage.SystemError)
+	} else if uc != nil {
+		return response.ErrorResponse(c, errormessage.UsedLoginID)
 	}
 
 	user := param.ConvertEntity()

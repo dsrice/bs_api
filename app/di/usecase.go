@@ -7,4 +7,5 @@ import (
 
 func provideUsecase(c *dig.Container) {
 	setProvide(c, usecases.NewLoginUsecase)
+	setProvide(c, usecases.NewUserUsecase)
 }

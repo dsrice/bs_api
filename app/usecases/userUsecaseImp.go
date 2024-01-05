@@ -3,12 +3,10 @@ package usecases
 import (
 	"app/controllers/rqp"
 	"app/entities"
-	"app/infra/errormessage"
 	"app/infra/logger"
 	ri "app/repositories/ri"
 	"app/usecases/ui"
 	"fmt"
-	"strconv"
 )
 
 type userUsecaseImp struct {
@@ -28,20 +26,18 @@ func (uc *userUsecaseImp) RegistValidate(param rqp.RegistUser) error {
 		return fmt.Errorf("必須項目が未設定")
 	}
 
-	user, err := uc.uRepo.GetUser(param.LoginID)
-
-	if err != nil {
-		return err
-	}
-
-	if user != nil {
-		err = fmt.Errorf(strconv.Itoa(errormessage.UsedLoginID))
-		logger.Error(err.Error())
-		return err
-	}
-
 	logger.Debug("RegistValidate Usecase Start")
 	return nil
+}
+
+func (uc *userUsecaseImp) CheckUser(loginID string) (*entities.UserEntity, error) {
+	um, err := uc.uRepo.GetUser(loginID)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return um, nil
 }
 
 func (uc *userUsecaseImp) RegistUser(user *entities.UserEntity) error {

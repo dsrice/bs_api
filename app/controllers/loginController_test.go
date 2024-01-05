@@ -6,6 +6,7 @@ import (
 	"app/controllers/rqp"
 	"app/controllers/rsp"
 	"app/entities"
+	"app/infra/server"
 	"app/usecases/ui"
 	"app/usecases/umock"
 	"encoding/json"
@@ -26,18 +27,6 @@ type LoginControllerSuite struct {
 	ct ci.LoginController
 }
 
-type customValidator struct {
-	validator *validator.Validate
-}
-
-func (cv *customValidator) Validate(i interface{}) error {
-	if err := cv.validator.Struct(i); err != nil {
-		// Optionally, you could return the error to give each route more control over the status code
-		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
-	}
-	return nil
-}
-
 func (s *LoginControllerSuite) SetupSuite() {
 	s.uc = new(umock.LoginUsecaseMock)
 }
@@ -52,7 +41,7 @@ func (s *LoginControllerSuite) TestSuccess() {
 
 	rqpJson, _ := json.Marshal(rqp)
 	e := echo.New()
-	e.Validator = &customValidator{validator: validator.New()}
+	e.Validator = &server.CustomValidator{Validator: validator.New()}
 	req := httptest.NewRequest(http.MethodPost, "/login", strings.NewReader(string(rqpJson)))
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 	rec := httptest.NewRecorder()
@@ -81,7 +70,7 @@ func (s *LoginControllerSuite) TestFailBadParam() {
 	s.uc.On("GetToken", &user).Return(&token, nil)
 
 	e := echo.New()
-	e.Validator = &customValidator{validator: validator.New()}
+	e.Validator = &server.CustomValidator{Validator: validator.New()}
 	req := httptest.NewRequest(http.MethodPost, "/login", strings.NewReader(`{"login_id:1}`))
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 	rec := httptest.NewRecorder()
@@ -105,7 +94,7 @@ func (s *LoginControllerSuite) TestFailParam() {
 	s.uc.On("GetToken", &user).Return(&token, nil)
 
 	e := echo.New()
-	e.Validator = &customValidator{validator: validator.New()}
+	e.Validator = &server.CustomValidator{Validator: validator.New()}
 	req := httptest.NewRequest(http.MethodPost, "/login", strings.NewReader(`{"login_id":""}`))
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 	rec := httptest.NewRecorder()
@@ -130,7 +119,7 @@ func (s *LoginControllerSuite) TestFailNoPass() {
 
 	rqpJson, _ := json.Marshal(rqp)
 	e := echo.New()
-	e.Validator = &customValidator{validator: validator.New()}
+	e.Validator = &server.CustomValidator{Validator: validator.New()}
 	req := httptest.NewRequest(http.MethodPost, "/login", strings.NewReader(string(rqpJson)))
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 	rec := httptest.NewRecorder()
@@ -155,7 +144,7 @@ func (s *LoginControllerSuite) TestFailNoUser() {
 
 	rqpJson, _ := json.Marshal(rqp)
 	e := echo.New()
-	e.Validator = &customValidator{validator: validator.New()}
+	e.Validator = &server.CustomValidator{Validator: validator.New()}
 	req := httptest.NewRequest(http.MethodPost, "/login", strings.NewReader(string(rqpJson)))
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 	rec := httptest.NewRecorder()
@@ -180,7 +169,7 @@ func (s *LoginControllerSuite) TestFailToken() {
 
 	rqpJson, _ := json.Marshal(rqp)
 	e := echo.New()
-	e.Validator = &customValidator{validator: validator.New()}
+	e.Validator = &server.CustomValidator{Validator: validator.New()}
 	req := httptest.NewRequest(http.MethodPost, "/login", strings.NewReader(string(rqpJson)))
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 	rec := httptest.NewRecorder()
