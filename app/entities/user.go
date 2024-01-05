@@ -20,9 +20,10 @@ func (e *UserEntity) ConvertUser(m *models.User) {
 
 func (e *UserEntity) ConvertUserModel() models.User {
 	return models.User{
+		ID:       e.UserID,
 		LoginID:  e.LoginID,
 		Name:     null.String{String: e.Name, Valid: true},
 		Password: e.Password,
-		Mail:     null.String{String: e.Mail, Valid: true},
+		Mail:     null.String{String: e.Mail, Valid: len(e.Mail) > 0},
 	}
 }

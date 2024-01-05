@@ -57,8 +57,6 @@ func (s *LoginControllerSuite) TestSuccess() {
 		assert.Equal(s.T(), "token", result.Token)
 		assert.Equal(s.T(), "refresh", result.RefreshToken)
 	}
-
-	s.uc = new(umock.LoginUsecaseMock)
 }
 
 func (s *LoginControllerSuite) TestFailBadParam() {
@@ -81,8 +79,6 @@ func (s *LoginControllerSuite) TestFailBadParam() {
 	if assert.NoError(s.T(), ct.Login(c)) {
 		assert.Equal(s.T(), http.StatusBadRequest, rec.Code)
 	}
-
-	s.uc = new(umock.LoginUsecaseMock)
 }
 
 func (s *LoginControllerSuite) TestFailParam() {
@@ -105,8 +101,6 @@ func (s *LoginControllerSuite) TestFailParam() {
 	if assert.NoError(s.T(), ct.Login(c)) {
 		assert.Equal(s.T(), http.StatusBadRequest, rec.Code)
 	}
-
-	s.uc = new(umock.LoginUsecaseMock)
 }
 
 func (s *LoginControllerSuite) TestFailNoPass() {
@@ -130,8 +124,6 @@ func (s *LoginControllerSuite) TestFailNoPass() {
 	if assert.NoError(s.T(), ct.Login(c)) {
 		assert.Equal(s.T(), http.StatusBadRequest, rec.Code)
 	}
-
-	s.uc = new(umock.LoginUsecaseMock)
 }
 
 func (s *LoginControllerSuite) TestFailNoUser() {
@@ -155,8 +147,6 @@ func (s *LoginControllerSuite) TestFailNoUser() {
 	if assert.NoError(s.T(), ct.Login(c)) {
 		assert.Equal(s.T(), http.StatusUnauthorized, rec.Code)
 	}
-
-	s.uc = new(umock.LoginUsecaseMock)
 }
 
 func (s *LoginControllerSuite) TestFailToken() {
@@ -180,8 +170,6 @@ func (s *LoginControllerSuite) TestFailToken() {
 	if assert.NoError(s.T(), ct.Login(c)) {
 		assert.Equal(s.T(), http.StatusInternalServerError, rec.Code)
 	}
-
-	s.uc = new(umock.LoginUsecaseMock)
 }
 
 func TestLoginControllerSuite(t *testing.T) {

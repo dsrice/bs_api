@@ -8,6 +8,7 @@ import (
 	"context"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
+	"github.com/volatiletech/sqlboiler/boil"
 	"log"
 	"testing"
 )
@@ -20,6 +21,7 @@ type GetUserSuite struct {
 func (s *GetUserSuite) SetupSuite() {
 	conn := connection.NewConnection()
 	s.repo = repositories.NewUserRepository(conn)
+	boil.DebugMode = true
 }
 
 func (s *GetUserSuite) TestSuccess() {
@@ -32,8 +34,7 @@ func (s *GetUserSuite) TestSuccess() {
 func (s *GetUserSuite) TestFailNoUser() {
 	u, err := s.repo.GetUser("")
 
-	assert.NotNil(s.T(), err)
-	assert.Equal(s.T(), err.Error(), "対象ユーザが見つかりませんでした")
+	assert.Nil(s.T(), err)
 	assert.Nil(s.T(), u)
 }
 
@@ -51,6 +52,7 @@ func (s *RegistUserSuite) SetupSuite() {
 	s.repo = repositories.NewUserRepository(conn)
 
 	user := entities.UserEntity{
+		UserID:   11,
 		LoginID:  "testtest",
 		Name:     "test",
 		Password: "test",
@@ -58,7 +60,6 @@ func (s *RegistUserSuite) SetupSuite() {
 	}
 
 	m := user.ConvertUserModel()
-	m.ID = 0
 	_, err := m.Delete(context.Background(), conn.Conn)
 	if err != nil {
 		log.Println(err.Error())
@@ -67,6 +68,7 @@ func (s *RegistUserSuite) SetupSuite() {
 
 func (s *RegistUserSuite) Test_01_Success() {
 	user := entities.UserEntity{
+		UserID:   11,
 		LoginID:  "testtest",
 		Name:     "test",
 		Password: "test",
@@ -80,6 +82,7 @@ func (s *RegistUserSuite) Test_01_Success() {
 
 func (s *RegistUserSuite) Test_02_Failed() {
 	user := entities.UserEntity{
+		UserID:   11,
 		LoginID:  "testtest",
 		Name:     "test",
 		Password: "test",

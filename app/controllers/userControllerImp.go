@@ -3,6 +3,7 @@ package controllers
 import (
 	"app/controllers/ci"
 	"app/controllers/rqp"
+	"app/controllers/rsp"
 	"app/infra/errormessage"
 	"app/infra/logger"
 	"app/infra/response"
@@ -57,6 +58,9 @@ func (ct *userControllerImp) RegistUser(c echo.Context) error {
 		return response.ErrorResponse(c, errormessage.SystemError)
 	}
 
+	res := rsp.User{}
+	res.ConvertResponse(&user)
+
 	logger.Debug("RegistUser API End")
-	return nil
+	return response.SccessResponse(c, res)
 }
