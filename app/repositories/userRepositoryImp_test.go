@@ -8,7 +8,6 @@ import (
 	"context"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
-	"github.com/volatiletech/sqlboiler/boil"
 	"log"
 	"testing"
 )
@@ -21,7 +20,6 @@ type GetUserSuite struct {
 func (s *GetUserSuite) SetupSuite() {
 	conn := connection.NewConnection()
 	s.repo = repositories.NewUserRepository(conn)
-	boil.DebugMode = true
 }
 
 func (s *GetUserSuite) TestSuccess() {
