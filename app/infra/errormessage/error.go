@@ -7,9 +7,10 @@ import (
 )
 
 const (
-	BadRequest  = 1000
-	FailAuth    = 1001
-	SystemError = 9999
+	BadRequest  = 1000 // リクエストパラメータ異常
+	FailAuth    = 1001 // 認証失敗
+	UsedLoginID = 1002 // ログインIDが利用済み
+	SystemError = 9999 // システムエラー
 )
 
 type EInfos struct {

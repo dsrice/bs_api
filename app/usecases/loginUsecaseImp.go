@@ -39,6 +39,11 @@ func (u *loginUsecaseImp) GetUser(loginID string) (*entities.UserEntity, error) 
 		return nil, err
 	}
 
+	if user == nil {
+		err = fmt.Errorf("対象ユーザがみつかりませんでした")
+		return nil, err
+	}
+
 	return user, nil
 }
 

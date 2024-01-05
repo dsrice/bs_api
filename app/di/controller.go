@@ -7,4 +7,5 @@ import (
 
 func provideController(c *dig.Container) {
 	setProvide(c, controllers.NewLoginController)
+	setProvide(c, controllers.NewUserController)
 }

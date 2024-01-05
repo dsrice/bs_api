@@ -12,19 +12,19 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-type loginControllerImp struct {
-	login ui.LoginUsecase
+type userControllerImp struct {
+	userUC ui.UserUsecase
 }
 
-func NewLoginController(uc ui.InUsecase) ci.LoginController {
-	return &loginControllerImp{
-		login: uc.Login,
+func NewUserController(uc ui.InUsecase) ci.UserController {
+	return &userControllerImp{
+		userUC: uc.UserUsecase,
 	}
 }
 
-func (ct *loginControllerImp) Login(c echo.Context) error {
-	logger.Debug("login API Start")
-	param := rqp.Login{}
+func (ct *userControllerImp) RegistUser(c echo.Context) error {
+	logger.Debug("RegistUser API Start")
+	param := rqp.RegistUser{}
 	if err := c.Bind(&param); err != nil {
 		logger.Error(err.Error())
 		return response.ErrorResponse(c, errormessage.BadRequest)
@@ -36,29 +36,31 @@ func (ct *loginControllerImp) Login(c echo.Context) error {
 		return response.ErrorResponse(c, errormessage.BadRequest)
 	}
 
-	err := ct.login.Validate(param)
-
+	err := ct.userUC.RegistValidate(param)
 	if err != nil {
-		logger.Error(err.Error())
 		return response.ErrorResponse(c, errormessage.BadRequest)
 	}
 
-	user, err := ct.login.GetUser(param.LoginID)
+	uc, err := ct.userUC.CheckUser(param.LoginID)
 
-	if err != nil || user == nil {
-		logger.Error(err.Error())
-		return response.ErrorResponse(c, errormessage.FailAuth)
+	if err != nil {
+		return response.ErrorResponse(c, errormessage.SystemError)
+	} else if uc != nil {
+		return response.ErrorResponse(c, errormessage.UsedLoginID)
 	}
 
-	token, err := ct.login.GetToken(user)
+	user := param.ConvertEntity()
+
+	err = ct.userUC.RegistUser(&user)
+
 	if err != nil {
 		logger.Error(err.Error())
 		return response.ErrorResponse(c, errormessage.SystemError)
 	}
 
-	res := rsp.Login{}
-	res.ConvertResponse(token)
+	res := rsp.User{}
+	res.ConvertResponse(&user)
 
-	logger.Debug("login API End")
+	logger.Debug("RegistUser API End")
 	return response.SccessResponse(c, res)
 }

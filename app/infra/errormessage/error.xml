@@ -10,6 +10,11 @@
         <status>401</status>
         <message>認証失敗</message>
     </error>
+    <error>
+        <code>1002</code>
+        <status>400</status>
+        <message>ログインIDが使われています</message>
+    </error>
 
 
     <error>

@@ -5,4 +5,5 @@ import "go.uber.org/dig"
 type InUsecase struct {
 	dig.In
 	Login LoginUsecase
+	UserUsecase UserUsecase
 }

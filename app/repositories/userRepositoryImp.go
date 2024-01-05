@@ -8,7 +8,7 @@ import (
 	"app/repositories/ri"
 	"context"
 	"database/sql"
-	"fmt"
+	"github.com/volatiletech/sqlboiler/boil"
 )
 
 type userRepositoryImp struct {
@@ -30,13 +30,27 @@ func (r *userRepositoryImp) GetUser(loginID string) (*entities.UserEntity, error
 	}
 
 	if len(ul) != 1 {
-		err = fmt.Errorf("対象ユーザが見つかりませんでした")
-		logger.Error(err.Error())
-		return nil, err
+		logger.Debug("ユーザーが見つかりませんでした")
+		return nil, nil
 	}
 
 	u := entities.UserEntity{}
 	u.ConvertUser(ul[0])
 
 	return &u, nil
+}
+
+func (r *userRepositoryImp) RegistUser(user entities.UserEntity) error {
+	logger.Debug("RegistUser Repository start")
+	m := user.ConvertUserModel()
+
+	err := m.Insert(context.Background(), r.con, boil.Infer())
+
+	if err != nil {
+		logger.Error(err.Error())
+		return err
+	}
+
+	logger.Debug("RegistUser Repository end")
+	return nil
 }

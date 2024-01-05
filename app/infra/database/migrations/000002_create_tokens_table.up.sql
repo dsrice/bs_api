@@ -1,5 +1,5 @@
 create table tokens (
-    id int not null  PRIMARY KEY,
+    id int not null  PRIMARY KEY AUTO_INCREMETN,
     user_id int not null ,
     token varchar(100),
     refresh_token varchar(100),
