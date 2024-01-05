@@ -45,7 +45,7 @@ func (ct *loginControllerImp) Login(c echo.Context) error {
 
 	user, err := ct.login.GetUser(param.LoginID)
 
-	if err != nil {
+	if err != nil || user == nil {
 		logger.Error(err.Error())
 		return response.ErrorResponse(c, errormessage.FailAuth)
 	}
