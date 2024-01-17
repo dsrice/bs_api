@@ -22,18 +22,39 @@ func (s *GetUserSuite) SetupSuite() {
 	s.repo = repositories.NewUserRepository(conn)
 }
 
-func (s *GetUserSuite) TestSuccess() {
-	u, err := s.repo.GetUser("test")
+func (s *GetUserSuite) TestSuccessALL() {
+	ul, err := s.repo.GetUser(nil, nil, nil)
 
 	assert.Nil(s.T(), err)
-	assert.Equal(s.T(), u.LoginID, "test")
+	assert.Equal(s.T(), ul[0].LoginID, "test")
+	assert.Equal(s.T(), ul[0].Name, "test")
 }
 
-func (s *GetUserSuite) TestFailNoUser() {
-	u, err := s.repo.GetUser("")
+func (s *GetUserSuite) TestSuccessLoginID() {
+	loginID := "test"
+	ul, err := s.repo.GetUser(&loginID, nil, nil)
 
 	assert.Nil(s.T(), err)
-	assert.Nil(s.T(), u)
+	assert.Equal(s.T(), ul[0].LoginID, "test")
+	assert.Equal(s.T(), ul[0].Name, "test")
+}
+
+func (s *GetUserSuite) TestSuccessName() {
+	name := "test"
+	ul, err := s.repo.GetUser(nil, &name, nil)
+
+	assert.Nil(s.T(), err)
+	assert.Equal(s.T(), ul[0].LoginID, "test")
+	assert.Equal(s.T(), ul[0].Name, "test")
+}
+
+func (s *GetUserSuite) TestSuccessMail() {
+	mail := "test@test"
+	ul, err := s.repo.GetUser(nil, nil, &mail)
+
+	assert.Nil(s.T(), err)
+	assert.Equal(s.T(), ul[0].LoginID, "test")
+	assert.Equal(s.T(), ul[0].Name, "test")
 }
 
 func TestGetUserSuite(t *testing.T) {
