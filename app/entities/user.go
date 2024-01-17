@@ -16,6 +16,8 @@ type UserEntity struct {
 func (e *UserEntity) ConvertUser(m *models.User) {
 	e.UserID = m.ID
 	e.LoginID = m.LoginID
+	e.Name = m.Name.String
+	e.Mail = m.Mail.String
 }
 
 func (e *UserEntity) ConvertUserModel() models.User {

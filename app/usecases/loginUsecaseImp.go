@@ -33,18 +33,18 @@ func (u *loginUsecaseImp) Validate(param rqp.Login) error {
 }
 
 func (u *loginUsecaseImp) GetUser(loginID string) (*entities.UserEntity, error) {
-	user, err := u.ur.GetUser(loginID)
+	user, err := u.ur.GetUser(&loginID, nil, nil)
 
 	if err != nil {
 		return nil, err
 	}
 
-	if user == nil {
+	if len(user) != 1 {
 		err = fmt.Errorf("対象ユーザがみつかりませんでした")
 		return nil, err
 	}
 
-	return user, nil
+	return user[0], nil
 }
 
 func (u *loginUsecaseImp) GetToken(user *entities.UserEntity) (*entities.TokenEntity, error) {

@@ -8,7 +8,9 @@ import (
 	"app/repositories/ri"
 	"context"
 	"database/sql"
+	"github.com/volatiletech/null"
 	"github.com/volatiletech/sqlboiler/boil"
+	"github.com/volatiletech/sqlboiler/queries/qm"
 )
 
 type userRepositoryImp struct {
@@ -19,9 +21,23 @@ func NewUserRepository(con *connection.Connection) ri.UserRepository {
 	return &userRepositoryImp{con.Conn}
 }
 
-func (r *userRepositoryImp) GetUser(loginID string) (*entities.UserEntity, error) {
+func (r *userRepositoryImp) GetUser(loginID, name, mail *string) ([]*entities.UserEntity, error) {
+	var muList []qm.QueryMod
+
+	if loginID != nil {
+		muList = append(muList, models.UserWhere.LoginID.EQ(*loginID))
+	}
+
+	if name != nil {
+		muList = append(muList, models.UserWhere.Name.EQ(null.StringFromPtr(name)))
+	}
+
+	if mail != nil {
+		muList = append(muList, models.UserWhere.Mail.EQ(null.StringFromPtr(mail)))
+	}
+
 	ul, err := models.Users(
-		models.UserWhere.LoginID.EQ(loginID),
+		muList...,
 	).All(context.Background(), r.con)
 
 	if err != nil {
@@ -29,15 +45,14 @@ func (r *userRepositoryImp) GetUser(loginID string) (*entities.UserEntity, error
 		return nil, err
 	}
 
-	if len(ul) != 1 {
-		logger.Debug("ユーザーが見つかりませんでした")
-		return nil, nil
+	var uList []*entities.UserEntity
+	for _, u := range ul {
+		e := entities.UserEntity{}
+		e.ConvertUser(u)
+		uList = append(uList, &e)
 	}
 
-	u := entities.UserEntity{}
-	u.ConvertUser(ul[0])
-
-	return &u, nil
+	return uList, nil
 }
 
 func (r *userRepositoryImp) RegistUser(user entities.UserEntity) error {
