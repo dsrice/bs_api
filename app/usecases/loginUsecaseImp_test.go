@@ -71,7 +71,12 @@ func (s *GetUserLoginUsecaseSuite) SetupSuite() {
 
 func (s *GetUserLoginUsecaseSuite) TestSuccess() {
 	user := entities.UserEntity{UserID: 1, LoginID: "t1"}
-	s.urepo.On("GetUser", "t1").Return(&user, nil)
+	loginID := "t1"
+	var name, mail *string
+	var ul []*entities.UserEntity
+	ul = append(ul, &user)
+
+	s.urepo.On("GetUser", &loginID, name, mail).Return(ul, nil)
 
 	repo := ri.InRepository{UserRepo: s.urepo}
 
@@ -85,8 +90,13 @@ func (s *GetUserLoginUsecaseSuite) TestSuccess() {
 }
 
 func (s *GetUserLoginUsecaseSuite) TestError() {
-	user := entities.UserEntity{UserID: 1, LoginID: "t1"}
-	s.urepo.On("GetUser", "t2").Return(&user, fmt.Errorf("error test"))
+	user := entities.UserEntity{UserID: 1, LoginID: "t2"}
+	loginID := "t2"
+	var name, mail *string
+	var ul []*entities.UserEntity
+	ul = append(ul, &user)
+
+	s.urepo.On("GetUser", &loginID, name, mail).Return(ul, fmt.Errorf("error test"))
 
 	repo := ri.InRepository{UserRepo: s.urepo}
 

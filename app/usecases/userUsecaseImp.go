@@ -31,13 +31,19 @@ func (uc *userUsecaseImp) RegistValidate(param rqp.RegistUser) error {
 }
 
 func (uc *userUsecaseImp) CheckUser(loginID string) (*entities.UserEntity, error) {
-	um, err := uc.uRepo.GetUser(loginID)
+	um, err := uc.uRepo.GetUser(&loginID, nil, nil)
 
 	if err != nil {
 		return nil, err
 	}
 
-	return um, nil
+	if len(um) != 1 {
+		err = fmt.Errorf(fmt.Sprintf("ユーザーが見つかりませんでいた。 該当数:%d", len(um)))
+		logger.Error(err.Error())
+		return nil, err
+	}
+
+	return um[0], nil
 }
 
 func (uc *userUsecaseImp) RegistUser(user *entities.UserEntity) error {
