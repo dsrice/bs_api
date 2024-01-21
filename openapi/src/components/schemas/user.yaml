@@ -4,4 +4,4 @@ properties:
     type: array
     description: ユーザ一覧
     items:
-      ref: "./user_detail.yaml"
+      $ref: "#/components/schemas/user_detail"

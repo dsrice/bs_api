@@ -4,6 +4,7 @@ import (
 	"app/controllers/ci"
 	"app/controllers/rqp"
 	"app/controllers/rsp"
+	"app/entities/user"
 	"app/infra/errormessage"
 	"app/infra/logger"
 	"app/infra/response"
@@ -49,9 +50,9 @@ func (ct *userControllerImp) RegistUser(c echo.Context) error {
 		return response.ErrorResponse(c, errormessage.UsedLoginID)
 	}
 
-	user := param.ConvertEntity()
+	ue := param.ConvertUserEntity()
 
-	err = ct.userUC.RegistUser(&user)
+	err = ct.userUC.RegistUser(&ue)
 
 	if err != nil {
 		logger.Error(err.Error())
@@ -59,8 +60,31 @@ func (ct *userControllerImp) RegistUser(c echo.Context) error {
 	}
 
 	res := rsp.User{}
-	res.ConvertResponse(&user)
+	res.ConvertResponse(&ue)
 
 	logger.Debug("RegistUser API End")
+	return response.SccessResponse(c, res)
+}
+
+func (ct *userControllerImp) GetUser(c echo.Context) error {
+	logger.Debug("GetUser API Start")
+	uc := user.Search{}
+	ul, err := ct.userUC.GetUsers(&uc)
+
+	if err != nil {
+		logger.Error(err.Error())
+		return response.ErrorResponse(c, errormessage.SystemError)
+	}
+
+	var rl []*rsp.User
+	for _, u := range ul {
+		r := rsp.User{}
+		r.ConvertResponse(u)
+		rl = append(rl, &r)
+	}
+
+	res := rsp.GetUser{Users: rl}
+
+	logger.Debug("GetUser API End")
 	return response.SccessResponse(c, res)
 }

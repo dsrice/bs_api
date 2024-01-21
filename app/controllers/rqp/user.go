@@ -11,7 +11,7 @@ type RegistUser struct {
 	Mail     string `json:"mail"`
 }
 
-func (e *RegistUser) ConvertEntity() user.Entity {
+func (e *RegistUser) ConvertUserEntity() user.Entity {
 	return user.Entity{
 		LoginID:  e.LoginID,
 		Password: e.Password,
