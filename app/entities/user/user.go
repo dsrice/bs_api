@@ -1,11 +1,11 @@
-package entities
+package user
 
 import (
 	"app/infra/database/models"
 	"github.com/volatiletech/null"
 )
 
-type UserEntity struct {
+type Entity struct {
 	UserID   int
 	LoginID  string
 	Name     string
@@ -13,14 +13,14 @@ type UserEntity struct {
 	Password string
 }
 
-func (e *UserEntity) ConvertUser(m *models.User) {
+func (e *Entity) ConvertUser(m *models.User) {
 	e.UserID = m.ID
 	e.LoginID = m.LoginID
 	e.Name = m.Name.String
 	e.Mail = m.Mail.String
 }
 
-func (e *UserEntity) ConvertUserModel() models.User {
+func (e *Entity) ConvertUserModel() models.User {
 	return models.User{
 		ID:       e.UserID,
 		LoginID:  e.LoginID,

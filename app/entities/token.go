@@ -1,13 +1,14 @@
 package entities
 
 import (
+	"app/entities/user"
 	"app/infra/database/models"
 	"github.com/volatiletech/null"
 	"math/rand"
 )
 
 type TokenEntity struct {
-	User         UserEntity
+	User         user.Entity
 	Token        string
 	RefreshToken string
 }
