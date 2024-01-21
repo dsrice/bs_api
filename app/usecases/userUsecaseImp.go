@@ -62,13 +62,13 @@ func (uc *userUsecaseImp) RegistUser(user *user.Entity) error {
 }
 
 func (uc *userUsecaseImp) GetUsers(us *user.Search) ([]*user.Entity, error) {
-	logger.Debug("RegistUser Usecase Start")
+	logger.Debug("GetUsers Usecase Start")
 	ul, err := uc.uRepo.GetUser(us)
 
 	if err != nil {
 		return nil, err
 	}
 
-	logger.Debug("RegistUser Usecase End")
+	logger.Debug("GetUsers Usecase End")
 	return ul, nil
 }

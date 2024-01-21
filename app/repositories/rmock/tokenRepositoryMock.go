@@ -10,7 +10,12 @@ type TokenRepositoryMock struct {
 	mock.Mock
 }
 
-func (_m *TokenRepositoryMock) SetToken(user user.Entity) (*token.Entity, error) {
-	ret := _m.Called(user)
+func (m *TokenRepositoryMock) SetToken(user user.Entity) (*token.Entity, error) {
+	ret := m.Called(user)
 	return ret.Get(0).(*token.Entity), ret.Error(1)
+}
+
+func (m *TokenRepositoryMock) SearchUser(token string) (*user.Entity, error) {
+	ret := m.Called(token)
+	return ret.Get(0).(*user.Entity), ret.Error(1)
 }
