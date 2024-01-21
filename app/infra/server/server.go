@@ -4,6 +4,7 @@ import (
 	"app/controllers/ci"
 	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 	"net/http"
 )
 
@@ -35,6 +36,16 @@ func NewServer(s ci.InController) *Server {
 func (s *Server) Start() {
 	s.echo = echo.New()
 	s.echo.Validator = &CustomValidator{Validator: validator.New()}
+
+	ka := middleware.KeyAuthConfig{
+		KeyLookup:  "header:" + echo.HeaderAuthorization,
+		AuthScheme: "Bearer",
+		Validator: func(auth string, c echo.Context) (bool, error) {
+			return true, nil
+		},
+	}
+
+	s.echo.Use(middleware.KeyAuthWithConfig(ka))
 	s.routing()
 
 	s.echo.Logger.Fatal(s.echo.Start(":1323"))
