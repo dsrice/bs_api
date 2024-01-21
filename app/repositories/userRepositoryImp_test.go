@@ -1,7 +1,7 @@
 package repositories_test
 
 import (
-	"app/entities"
+	"app/entities/user"
 	"app/infra/database/connection"
 	"app/repositories"
 	"app/repositories/ri"
@@ -23,7 +23,8 @@ func (s *GetUserSuite) SetupSuite() {
 }
 
 func (s *GetUserSuite) TestSuccessALL() {
-	ul, err := s.repo.GetUser(nil, nil, nil)
+	us := user.Search{}
+	ul, err := s.repo.GetUser(&us)
 
 	assert.Nil(s.T(), err)
 	assert.Equal(s.T(), ul[0].LoginID, "test")
@@ -32,7 +33,10 @@ func (s *GetUserSuite) TestSuccessALL() {
 
 func (s *GetUserSuite) TestSuccessLoginID() {
 	loginID := "test"
-	ul, err := s.repo.GetUser(&loginID, nil, nil)
+	us := user.Search{
+		LoginID: &loginID,
+	}
+	ul, err := s.repo.GetUser(&us)
 
 	assert.Nil(s.T(), err)
 	assert.Equal(s.T(), ul[0].LoginID, "test")
@@ -41,7 +45,10 @@ func (s *GetUserSuite) TestSuccessLoginID() {
 
 func (s *GetUserSuite) TestSuccessName() {
 	name := "test"
-	ul, err := s.repo.GetUser(nil, &name, nil)
+	us := user.Search{
+		Name: &name,
+	}
+	ul, err := s.repo.GetUser(&us)
 
 	assert.Nil(s.T(), err)
 	assert.Equal(s.T(), ul[0].LoginID, "test")
@@ -50,7 +57,11 @@ func (s *GetUserSuite) TestSuccessName() {
 
 func (s *GetUserSuite) TestSuccessMail() {
 	mail := "test@test"
-	ul, err := s.repo.GetUser(nil, nil, &mail)
+	us := user.Search{
+		Mail: &mail,
+	}
+
+	ul, err := s.repo.GetUser(&us)
 
 	assert.Nil(s.T(), err)
 	assert.Equal(s.T(), ul[0].LoginID, "test")
@@ -70,7 +81,7 @@ func (s *RegistUserSuite) SetupSuite() {
 	conn := connection.NewConnection()
 	s.repo = repositories.NewUserRepository(conn)
 
-	user := entities.UserEntity{
+	user := user.Entity{
 		UserID:   11,
 		LoginID:  "testtest",
 		Name:     "test",
@@ -86,7 +97,7 @@ func (s *RegistUserSuite) SetupSuite() {
 }
 
 func (s *RegistUserSuite) Test_01_Success() {
-	user := entities.UserEntity{
+	user := user.Entity{
 		UserID:   11,
 		LoginID:  "testtest",
 		Name:     "test",
@@ -100,7 +111,7 @@ func (s *RegistUserSuite) Test_01_Success() {
 }
 
 func (s *RegistUserSuite) Test_02_Failed() {
-	user := entities.UserEntity{
+	user := user.Entity{
 		UserID:   11,
 		LoginID:  "testtest",
 		Name:     "test",

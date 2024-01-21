@@ -2,7 +2,8 @@ package umock
 
 import (
 	"app/controllers/rqp"
-	"app/entities"
+	"app/entities/token"
+	"app/entities/user"
 	"github.com/stretchr/testify/mock"
 )
 
@@ -15,12 +16,12 @@ func (m *LoginUsecaseMock) Validate(param rqp.Login) error {
 	return ret.Error(0)
 }
 
-func (m *LoginUsecaseMock) GetUser(loginID string) (*entities.UserEntity, error) {
+func (m *LoginUsecaseMock) GetUser(loginID string) (*user.Entity, error) {
 	ret := m.Called(loginID)
-	return ret.Get(0).(*entities.UserEntity), ret.Error(1)
+	return ret.Get(0).(*user.Entity), ret.Error(1)
 }
 
-func (m *LoginUsecaseMock) GetToken(user *entities.UserEntity) (*entities.TokenEntity, error) {
+func (m *LoginUsecaseMock) GetToken(user *user.Entity) (*token.Entity, error) {
 	ret := m.Called(user)
-	return ret.Get(0).(*entities.TokenEntity), ret.Error(1)
+	return ret.Get(0).(*token.Entity), ret.Error(1)
 }

@@ -5,7 +5,8 @@ import (
 	"app/controllers/ci"
 	"app/controllers/rqp"
 	"app/controllers/rsp"
-	"app/entities"
+	"app/entities/token"
+	"app/entities/user"
 	"app/infra/server"
 	"app/usecases/ui"
 	"app/usecases/umock"
@@ -33,8 +34,8 @@ func (s *LoginControllerSuite) SetupSuite() {
 
 func (s *LoginControllerSuite) TestSuccess() {
 	rqp := rqp.Login{LoginID: "t1", Password: "t1"}
-	user := entities.UserEntity{UserID: 1, LoginID: "t1"}
-	token := entities.TokenEntity{User: user, Token: "token", RefreshToken: "refresh"}
+	user := user.Entity{UserID: 1, LoginID: "t1"}
+	token := token.Entity{User: user, Token: "token", RefreshToken: "refresh"}
 	s.uc.On("Validate", rqp).Return(nil)
 	s.uc.On("GetUser", rqp.LoginID).Return(&user, nil)
 	s.uc.On("GetToken", &user).Return(&token, nil)
@@ -61,8 +62,8 @@ func (s *LoginControllerSuite) TestSuccess() {
 
 func (s *LoginControllerSuite) TestFailBadParam() {
 	rqp := rqp.Login{LoginID: "t2"}
-	user := entities.UserEntity{UserID: 2, LoginID: "t2"}
-	token := entities.TokenEntity{User: user, Token: "token", RefreshToken: "refresh"}
+	user := user.Entity{UserID: 2, LoginID: "t2"}
+	token := token.Entity{User: user, Token: "token", RefreshToken: "refresh"}
 	s.uc.On("Validate", rqp).Return(nil)
 	s.uc.On("GetUser", rqp.LoginID).Return(&user, nil)
 	s.uc.On("GetToken", &user).Return(&token, nil)
@@ -83,8 +84,8 @@ func (s *LoginControllerSuite) TestFailBadParam() {
 
 func (s *LoginControllerSuite) TestFailParam() {
 	rqp := rqp.Login{LoginID: "t2"}
-	user := entities.UserEntity{UserID: 2, LoginID: "t2"}
-	token := entities.TokenEntity{User: user, Token: "token", RefreshToken: "refresh"}
+	user := user.Entity{UserID: 2, LoginID: "t2"}
+	token := token.Entity{User: user, Token: "token", RefreshToken: "refresh"}
 	s.uc.On("Validate", rqp).Return(nil)
 	s.uc.On("GetUser", rqp.LoginID).Return(&user, nil)
 	s.uc.On("GetToken", &user).Return(&token, nil)
@@ -105,8 +106,8 @@ func (s *LoginControllerSuite) TestFailParam() {
 
 func (s *LoginControllerSuite) TestFailNoPass() {
 	rqp := rqp.Login{LoginID: "t3", Password: "t3"}
-	user := entities.UserEntity{UserID: 3, LoginID: "t3"}
-	token := entities.TokenEntity{User: user, Token: "token", RefreshToken: "refresh"}
+	user := user.Entity{UserID: 3, LoginID: "t3"}
+	token := token.Entity{User: user, Token: "token", RefreshToken: "refresh"}
 	s.uc.On("Validate", rqp).Return(fmt.Errorf("error test"))
 	s.uc.On("GetUser", rqp.LoginID).Return(&user, nil)
 	s.uc.On("GetToken", &user).Return(&token, nil)
@@ -128,8 +129,8 @@ func (s *LoginControllerSuite) TestFailNoPass() {
 
 func (s *LoginControllerSuite) TestFailNoUser() {
 	rqp := rqp.Login{LoginID: "t4", Password: "t4"}
-	user := entities.UserEntity{UserID: 4, LoginID: "t4"}
-	token := entities.TokenEntity{User: user, Token: "token", RefreshToken: "refresh"}
+	user := user.Entity{UserID: 4, LoginID: "t4"}
+	token := token.Entity{User: user, Token: "token", RefreshToken: "refresh"}
 	s.uc.On("Validate", rqp).Return(nil)
 	s.uc.On("GetUser", rqp.LoginID).Return(&user, fmt.Errorf("error test"))
 	s.uc.On("GetToken", &user).Return(&token, nil)
@@ -151,8 +152,8 @@ func (s *LoginControllerSuite) TestFailNoUser() {
 
 func (s *LoginControllerSuite) TestFailToken() {
 	rqp := rqp.Login{LoginID: "t5", Password: "t5"}
-	user := entities.UserEntity{UserID: 5, LoginID: "t5"}
-	token := entities.TokenEntity{User: user, Token: "token", RefreshToken: "refresh"}
+	user := user.Entity{UserID: 5, LoginID: "t5"}
+	token := token.Entity{User: user, Token: "token", RefreshToken: "refresh"}
 	s.uc.On("Validate", rqp).Return(nil)
 	s.uc.On("GetUser", rqp.LoginID).Return(&user, nil)
 	s.uc.On("GetToken", &user).Return(&token, fmt.Errorf("error test"))

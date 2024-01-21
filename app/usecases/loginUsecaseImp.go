@@ -2,7 +2,8 @@ package usecases
 
 import (
 	"app/controllers/rqp"
-	"app/entities"
+	"app/entities/token"
+	"app/entities/user"
 	"app/infra/logger"
 	"app/repositories/ri"
 	"app/usecases/ui"
@@ -32,8 +33,12 @@ func (u *loginUsecaseImp) Validate(param rqp.Login) error {
 	return nil
 }
 
-func (u *loginUsecaseImp) GetUser(loginID string) (*entities.UserEntity, error) {
-	user, err := u.ur.GetUser(&loginID, nil, nil)
+func (u *loginUsecaseImp) GetUser(loginID string) (*user.Entity, error) {
+	us := user.Search{
+		LoginID: &loginID,
+	}
+
+	user, err := u.ur.GetUser(&us)
 
 	if err != nil {
 		return nil, err
@@ -47,7 +52,7 @@ func (u *loginUsecaseImp) GetUser(loginID string) (*entities.UserEntity, error) 
 	return user[0], nil
 }
 
-func (u *loginUsecaseImp) GetToken(user *entities.UserEntity) (*entities.TokenEntity, error) {
+func (u *loginUsecaseImp) GetToken(user *user.Entity) (*token.Entity, error) {
 	token, err := u.tr.SetToken(*user)
 
 	if err != nil {
