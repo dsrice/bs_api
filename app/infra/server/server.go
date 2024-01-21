@@ -52,6 +52,14 @@ func (s *Server) Start() {
 	s.echo.Validator = &CustomValidator{Validator: validator.New()}
 
 	ka := middleware.KeyAuthConfig{
+		Skipper: func(c echo.Context) bool {
+			logger.Debug(c.Request().URL.Path)
+			if c.Request().URL.Path == "/login" {
+				return true
+			}
+
+			return false
+		},
 		KeyLookup:  "header:" + echo.HeaderAuthorization,
 		AuthScheme: "Bearer",
 		Validator: func(auth string, c echo.Context) (bool, error) {
