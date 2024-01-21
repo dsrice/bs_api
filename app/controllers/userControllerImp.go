@@ -68,6 +68,7 @@ func (ct *userControllerImp) RegistUser(c echo.Context) error {
 
 func (ct *userControllerImp) GetUser(c echo.Context) error {
 	logger.Debug("GetUser API Start")
+
 	uc := user.Search{}
 	ul, err := ct.userUC.GetUsers(&uc)
 

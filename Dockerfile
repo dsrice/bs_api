@@ -9,6 +9,14 @@ RUN apk --update add tzdata && \
 
 WORKDIR /go/src/app
 
+# ログに出力する時間をJSTにするため、タイムゾーンを設定
+ENV TZ /usr/share/zoneinfo/Asia/Tokyo
+
+# ModuleモードをON
+ENV GO111MODULE=on
+
 RUN go install github.com/volatiletech/sqlboiler@latest
 RUN go install github.com/volatiletech/sqlboiler/drivers/sqlboiler-mysql@latest
 RUN go install -tags mysql github.com/golang-migrate/migrate/v4/cmd/migrate@latest
+RUN go install github.com/cosmtrek/air@latest
+CMD ["air"]

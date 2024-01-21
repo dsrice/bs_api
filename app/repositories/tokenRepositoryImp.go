@@ -9,6 +9,7 @@ import (
 	"app/repositories/ri"
 	"context"
 	"database/sql"
+	"github.com/volatiletech/null"
 	"github.com/volatiletech/sqlboiler/boil"
 )
 
@@ -42,4 +43,29 @@ func (r *tokenRepositoryImp) SetToken(user user.Entity) (*token.Entity, error) {
 
 	logger.Debug("SetToken End")
 	return &te, nil
+}
+
+func (r *tokenRepositoryImp) SearchUser(token string) (*user.Entity, error) {
+	logger.Debug("SearchUser End")
+	t, err := models.Tokens(
+		models.TokenWhere.Token.EQ(null.StringFromPtr(&token)),
+	).One(context.Background(), r.con)
+
+	if err != nil {
+		logger.Error(err.Error())
+		return nil, err
+	}
+
+	u, err := t.User().One(context.Background(), r.con)
+
+	if err != nil {
+		logger.Error(err.Error())
+		return nil, err
+	}
+
+	ue := user.Entity{}
+	ue.ConvertUser(u)
+
+	logger.Debug("SearchUser End")
+	return &ue, nil
 }

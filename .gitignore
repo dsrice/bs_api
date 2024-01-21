@@ -3,3 +3,4 @@ openapi/dist/swagger.yaml
 db/*
 app/cover_file.out
 app/cover_file.html
+app/tmp
