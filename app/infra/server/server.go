@@ -45,7 +45,7 @@ func (s *Server) Start() {
 	//セッションを設定
 	store := sessions.NewCookieStore([]byte("bowring_api_secret_key"))
 	store.Options.Path = "/"
-	store.Options.MaxAge = 86400
+	store.Options.MaxAge = -1
 	store.Options.HttpOnly = true
 	s.echo.Use(session.Middleware(store))
 

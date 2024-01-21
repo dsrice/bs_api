@@ -10,7 +10,7 @@ import (
 )
 
 func GetSession(c echo.Context) *sessions.Session {
-	s, err := session.Get("session", c)
+	s, err := session.Get("bwas", c)
 	gob.Register(user.Entity{})
 
 	if err != nil {

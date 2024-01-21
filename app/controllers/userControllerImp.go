@@ -8,7 +8,6 @@ import (
 	"app/infra/errormessage"
 	"app/infra/logger"
 	"app/infra/response"
-	"app/infra/server"
 	"app/usecases/ui"
 	"fmt"
 	"github.com/labstack/echo/v4"
@@ -69,10 +68,6 @@ func (ct *userControllerImp) RegistUser(c echo.Context) error {
 
 func (ct *userControllerImp) GetUser(c echo.Context) error {
 	logger.Debug("GetUser API Start")
-
-	sess := server.GetSession(c)
-	t := sess.Values["user"]
-	fmt.Println(t)
 
 	uc := user.Search{}
 	ul, err := ct.userUC.GetUsers(&uc)
