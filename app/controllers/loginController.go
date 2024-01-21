@@ -43,14 +43,14 @@ func (ct *loginControllerImp) Login(c echo.Context) error {
 		return response.ErrorResponse(c, errormessage.BadRequest)
 	}
 
-	user, err := ct.login.GetUser(param.LoginID)
+	user, err := ct.login.GetUser(param.LoginID, c)
 
 	if err != nil || user == nil {
 		logger.Error(err.Error())
 		return response.ErrorResponse(c, errormessage.FailAuth)
 	}
 
-	token, err := ct.login.GetToken(user)
+	token, err := ct.login.GetToken(user, c)
 	if err != nil {
 		logger.Error(err.Error())
 		return response.ErrorResponse(c, errormessage.SystemError)

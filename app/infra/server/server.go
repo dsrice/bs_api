@@ -68,7 +68,7 @@ func (s *Server) Start() {
 
 			sess := GetSession(c)
 
-			u, err := s.TRepo.SearchUser(auth)
+			u, err := s.TRepo.SearchUser(auth, c)
 
 			if err != nil {
 				logger.Error(err.Error())

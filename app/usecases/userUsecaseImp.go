@@ -7,6 +7,7 @@ import (
 	ri "app/repositories/ri"
 	"app/usecases/ui"
 	"fmt"
+	"github.com/labstack/echo/v4"
 )
 
 type userUsecaseImp struct {
@@ -30,11 +31,11 @@ func (uc *userUsecaseImp) RegistValidate(param rqp.RegistUser) error {
 	return nil
 }
 
-func (uc *userUsecaseImp) CheckUser(loginID string) (*user.Entity, error) {
+func (uc *userUsecaseImp) CheckUser(loginID string, c echo.Context) (*user.Entity, error) {
 	us := user.Search{
 		LoginID: &loginID,
 	}
-	um, err := uc.uRepo.GetUser(&us)
+	um, err := uc.uRepo.GetUser(&us, c)
 
 	if err != nil {
 		return nil, err
@@ -49,9 +50,9 @@ func (uc *userUsecaseImp) CheckUser(loginID string) (*user.Entity, error) {
 	return um[0], nil
 }
 
-func (uc *userUsecaseImp) RegistUser(user *user.Entity) error {
+func (uc *userUsecaseImp) RegistUser(user *user.Entity, c echo.Context) error {
 	logger.Debug("RegistUser Usecase Start")
-	err := uc.uRepo.RegistUser(*user)
+	err := uc.uRepo.RegistUser(*user, c)
 
 	if err != nil {
 		return err
@@ -61,9 +62,9 @@ func (uc *userUsecaseImp) RegistUser(user *user.Entity) error {
 	return nil
 }
 
-func (uc *userUsecaseImp) GetUsers(us *user.Search) ([]*user.Entity, error) {
+func (uc *userUsecaseImp) GetUsers(us *user.Search, c echo.Context) ([]*user.Entity, error) {
 	logger.Debug("GetUsers Usecase Start")
-	ul, err := uc.uRepo.GetUser(us)
+	ul, err := uc.uRepo.GetUser(us, c)
 
 	if err != nil {
 		return nil, err

@@ -8,6 +8,7 @@ import (
 	"app/repositories/ri"
 	"app/usecases/ui"
 	"fmt"
+	"github.com/labstack/echo/v4"
 )
 
 type loginUsecaseImp struct {
@@ -33,12 +34,12 @@ func (u *loginUsecaseImp) Validate(param rqp.Login) error {
 	return nil
 }
 
-func (u *loginUsecaseImp) GetUser(loginID string) (*user.Entity, error) {
+func (u *loginUsecaseImp) GetUser(loginID string, c echo.Context) (*user.Entity, error) {
 	us := user.Search{
 		LoginID: &loginID,
 	}
 
-	user, err := u.ur.GetUser(&us)
+	user, err := u.ur.GetUser(&us, c)
 
 	if err != nil {
 		return nil, err
@@ -52,8 +53,8 @@ func (u *loginUsecaseImp) GetUser(loginID string) (*user.Entity, error) {
 	return user[0], nil
 }
 
-func (u *loginUsecaseImp) GetToken(user *user.Entity) (*token.Entity, error) {
-	token, err := u.tr.SetToken(*user)
+func (u *loginUsecaseImp) GetToken(user *user.Entity, c echo.Context) (*token.Entity, error) {
+	token, err := u.tr.SetToken(*user, c)
 
 	if err != nil {
 		return nil, err

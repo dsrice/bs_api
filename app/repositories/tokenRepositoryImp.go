@@ -9,6 +9,7 @@ import (
 	"app/repositories/ri"
 	"context"
 	"database/sql"
+	"github.com/labstack/echo/v4"
 	"github.com/volatiletech/null"
 	"github.com/volatiletech/sqlboiler/boil"
 )
@@ -21,7 +22,7 @@ func NewTokenRepository(con *connection.Connection) ri.TokenRepository {
 	return &tokenRepositoryImp{con: con.Conn}
 }
 
-func (r *tokenRepositoryImp) SetToken(user user.Entity) (*token.Entity, error) {
+func (r *tokenRepositoryImp) SetToken(user user.Entity, c echo.Context) (*token.Entity, error) {
 	logger.Debug("SetToken Start")
 	_, err := models.Tokens(models.TokenWhere.UserID.EQ(user.UserID)).DeleteAll(context.Background(), r.con)
 
@@ -34,7 +35,7 @@ func (r *tokenRepositoryImp) SetToken(user user.Entity) (*token.Entity, error) {
 	te.SetToken()
 
 	token := te.ConvertModel()
-	err = token.Insert(context.Background(), r.con, boil.Infer())
+	err = token.Insert(c.Request().Context(), r.con, boil.Infer())
 
 	if err != nil {
 		logger.Error(err.Error())
@@ -45,18 +46,18 @@ func (r *tokenRepositoryImp) SetToken(user user.Entity) (*token.Entity, error) {
 	return &te, nil
 }
 
-func (r *tokenRepositoryImp) SearchUser(token string) (*user.Entity, error) {
+func (r *tokenRepositoryImp) SearchUser(token string, c echo.Context) (*user.Entity, error) {
 	logger.Debug("SearchUser End")
 	t, err := models.Tokens(
 		models.TokenWhere.Token.EQ(null.StringFromPtr(&token)),
-	).One(context.Background(), r.con)
+	).One(c.Request().Context(), r.con)
 
 	if err != nil {
 		logger.Error(err.Error())
 		return nil, err
 	}
 
-	u, err := t.User().One(context.Background(), r.con)
+	u, err := t.User().One(c.Request().Context(), r.con)
 
 	if err != nil {
 		logger.Error(err.Error())

@@ -42,7 +42,7 @@ func (ct *userControllerImp) RegistUser(c echo.Context) error {
 		return response.ErrorResponse(c, errormessage.BadRequest)
 	}
 
-	uc, err := ct.userUC.CheckUser(param.LoginID)
+	uc, err := ct.userUC.CheckUser(param.LoginID, c)
 
 	if err != nil {
 		return response.ErrorResponse(c, errormessage.SystemError)
@@ -52,7 +52,7 @@ func (ct *userControllerImp) RegistUser(c echo.Context) error {
 
 	ue := param.ConvertUserEntity()
 
-	err = ct.userUC.RegistUser(&ue)
+	err = ct.userUC.RegistUser(&ue, c)
 
 	if err != nil {
 		logger.Error(err.Error())
@@ -70,7 +70,7 @@ func (ct *userControllerImp) GetUser(c echo.Context) error {
 	logger.Debug("GetUser API Start")
 
 	uc := user.Search{}
-	ul, err := ct.userUC.GetUsers(&uc)
+	ul, err := ct.userUC.GetUsers(&uc, c)
 
 	if err != nil {
 		logger.Error(err.Error())
