@@ -2,7 +2,7 @@ package usecases_test
 
 import (
 	"app/controllers/rqp"
-	"app/entities"
+	"app/entities/user"
 	"app/repositories/ri"
 	"app/repositories/rmock"
 	"app/usecases"
@@ -22,7 +22,7 @@ func (s *RegistUserUsecaseSuite) SetupSuite() {
 }
 
 func (s *RegistUserUsecaseSuite) TestSuccess() {
-	user := entities.UserEntity{LoginID: "t1"}
+	user := user.Entity{LoginID: "t1"}
 	s.urepo.On("RegistUser", user).Return(nil)
 
 	ir := ri.InRepository{UserRepo: s.urepo}
@@ -34,7 +34,7 @@ func (s *RegistUserUsecaseSuite) TestSuccess() {
 }
 
 func (s *RegistUserUsecaseSuite) TestFailed() {
-	user := entities.UserEntity{LoginID: "t2"}
+	user := user.Entity{LoginID: "t2"}
 	s.urepo.On("RegistUser", user).Return(fmt.Errorf("error test"))
 
 	ir := ri.InRepository{UserRepo: s.urepo}
@@ -60,11 +60,13 @@ func (s *CheckUserUsecaseSuite) SetupSuite() {
 
 func (s *CheckUserUsecaseSuite) TestSuccess() {
 	loginID := "test"
-	var name, mail *string
-	var ul []*entities.UserEntity
-	u := entities.UserEntity{UserID: 1}
+	us := user.Search{
+		LoginID: &loginID,
+	}
+	var ul []*user.Entity
+	u := user.Entity{UserID: 1}
 	ul = append(ul, &u)
-	s.urepo.On("GetUser", &loginID, name, mail).Return(ul, nil)
+	s.urepo.On("GetUser", &us).Return(ul, nil)
 
 	ir := ri.InRepository{UserRepo: s.urepo}
 	uc := usecases.NewUserUsecase(ir)
@@ -77,9 +79,11 @@ func (s *CheckUserUsecaseSuite) TestSuccess() {
 
 func (s *CheckUserUsecaseSuite) TestSFailedError() {
 	loginID := "test2"
-	var name, mail *string
-	var ul []*entities.UserEntity
-	s.urepo.On("GetUser", &loginID, name, mail).Return(ul, fmt.Errorf("test error"))
+	us := user.Search{
+		LoginID: &loginID,
+	}
+	var ul []*user.Entity
+	s.urepo.On("GetUser", &us).Return(ul, fmt.Errorf("test error"))
 
 	ir := ri.InRepository{UserRepo: s.urepo}
 	uc := usecases.NewUserUsecase(ir)
@@ -92,13 +96,15 @@ func (s *CheckUserUsecaseSuite) TestSFailedError() {
 
 func (s *CheckUserUsecaseSuite) TestSFailedUnique() {
 	loginID := "test3"
-	var name, mail *string
-	var ul []*entities.UserEntity
-	u := entities.UserEntity{UserID: 1}
+	us := user.Search{
+		LoginID: &loginID,
+	}
+	var ul []*user.Entity
+	u := user.Entity{UserID: 1}
 	ul = append(ul, &u)
-	u = entities.UserEntity{UserID: 2}
+	u = user.Entity{UserID: 2}
 	ul = append(ul, &u)
-	s.urepo.On("GetUser", &loginID, name, mail).Return(ul, nil)
+	s.urepo.On("GetUser", &us).Return(ul, nil)
 
 	ir := ri.InRepository{UserRepo: s.urepo}
 	uc := usecases.NewUserUsecase(ir)
@@ -171,4 +177,37 @@ func (s *RegistValidateUsecaseSuite) TestFailedNoPassword() {
 
 func TestRegistValidateUsecaseSuite(t *testing.T) {
 	suite.Run(t, new(RegistValidateUsecaseSuite))
+}
+
+type GetUserUsecaseSuite struct {
+	suite.Suite
+	urepo *rmock.UserRepositoryMock
+}
+
+func (s *GetUserUsecaseSuite) SetupSuite() {
+	s.urepo = new(rmock.UserRepositoryMock)
+}
+
+func (s *GetUserUsecaseSuite) TestSuccess() {
+	var ul []*user.Entity
+	loginID := "test"
+	us := user.Search{
+		LoginID: &loginID,
+	}
+
+	u := user.Entity{UserID: 1}
+	ul = append(ul, &u)
+	s.urepo.On("GetUser", &us).Return(ul, nil)
+
+	ir := ri.InRepository{UserRepo: s.urepo}
+	uc := usecases.NewUserUsecase(ir)
+
+	result, err := uc.GetUsers(&us)
+
+	assert.Nil(s.T(), err)
+	assert.Len(s.T(), result, 1)
+}
+
+func TestGetUserUsecaseSuite(t *testing.T) {
+	suite.Run(t, new(GetUserUsecaseSuite))
 }

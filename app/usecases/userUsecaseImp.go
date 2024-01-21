@@ -2,7 +2,7 @@ package usecases
 
 import (
 	"app/controllers/rqp"
-	"app/entities"
+	"app/entities/user"
 	"app/infra/logger"
 	ri "app/repositories/ri"
 	"app/usecases/ui"
@@ -30,8 +30,11 @@ func (uc *userUsecaseImp) RegistValidate(param rqp.RegistUser) error {
 	return nil
 }
 
-func (uc *userUsecaseImp) CheckUser(loginID string) (*entities.UserEntity, error) {
-	um, err := uc.uRepo.GetUser(&loginID, nil, nil)
+func (uc *userUsecaseImp) CheckUser(loginID string) (*user.Entity, error) {
+	us := user.Search{
+		LoginID: &loginID,
+	}
+	um, err := uc.uRepo.GetUser(&us)
 
 	if err != nil {
 		return nil, err
@@ -46,7 +49,7 @@ func (uc *userUsecaseImp) CheckUser(loginID string) (*entities.UserEntity, error
 	return um[0], nil
 }
 
-func (uc *userUsecaseImp) RegistUser(user *entities.UserEntity) error {
+func (uc *userUsecaseImp) RegistUser(user *user.Entity) error {
 	logger.Debug("RegistUser Usecase Start")
 	err := uc.uRepo.RegistUser(*user)
 
@@ -56,4 +59,16 @@ func (uc *userUsecaseImp) RegistUser(user *entities.UserEntity) error {
 
 	logger.Debug("RegistUser Usecase End")
 	return nil
+}
+
+func (uc *userUsecaseImp) GetUsers(us *user.Search) ([]*user.Entity, error) {
+	logger.Debug("RegistUser Usecase Start")
+	ul, err := uc.uRepo.GetUser(us)
+
+	if err != nil {
+		return nil, err
+	}
+
+	logger.Debug("RegistUser Usecase End")
+	return ul, nil
 }

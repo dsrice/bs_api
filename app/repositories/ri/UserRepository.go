@@ -1,8 +1,10 @@
 package ri
 
-import "app/entities"
+import (
+	"app/entities/user"
+)
 
 type UserRepository interface {
-	GetUser(loginID, name, mail *string) ([]*entities.UserEntity, error)
-	RegistUser(user entities.UserEntity) error
+	GetUser(us *user.Search) ([]*user.Entity, error)
+	RegistUser(user user.Entity) error
 }

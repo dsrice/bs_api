@@ -2,11 +2,12 @@ package ui
 
 import (
 	"app/controllers/rqp"
-	"app/entities"
+	"app/entities/token"
+	"app/entities/user"
 )
 
 type LoginUsecase interface {
 	Validate(param rqp.Login) error
-	GetUser(loginID string) (*entities.UserEntity, error)
-	GetToken(user *entities.UserEntity) (*entities.TokenEntity, error)
+	GetUser(loginID string) (*user.Entity, error)
+	GetToken(user *user.Entity) (*token.Entity, error)
 }

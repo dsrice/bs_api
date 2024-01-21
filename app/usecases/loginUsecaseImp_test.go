@@ -2,7 +2,8 @@ package usecases_test
 
 import (
 	"app/controllers/rqp"
-	"app/entities"
+	"app/entities/token"
+	"app/entities/user"
 	"app/repositories/ri"
 	"app/repositories/rmock"
 	"app/usecases"
@@ -70,13 +71,14 @@ func (s *GetUserLoginUsecaseSuite) SetupSuite() {
 }
 
 func (s *GetUserLoginUsecaseSuite) TestSuccess() {
-	user := entities.UserEntity{UserID: 1, LoginID: "t1"}
+	ue := user.Entity{UserID: 1, LoginID: "t1"}
 	loginID := "t1"
-	var name, mail *string
-	var ul []*entities.UserEntity
-	ul = append(ul, &user)
-
-	s.urepo.On("GetUser", &loginID, name, mail).Return(ul, nil)
+	var ul []*user.Entity
+	ul = append(ul, &ue)
+	us := user.Search{
+		LoginID: &loginID,
+	}
+	s.urepo.On("GetUser", &us).Return(ul, nil)
 
 	repo := ri.InRepository{UserRepo: s.urepo}
 
@@ -90,11 +92,11 @@ func (s *GetUserLoginUsecaseSuite) TestSuccess() {
 }
 
 func (s *GetUserLoginUsecaseSuite) TestError() {
-	user := entities.UserEntity{UserID: 1, LoginID: "t2"}
+	ue := user.Entity{UserID: 1, LoginID: "t2"}
 	loginID := "t2"
 	var name, mail *string
-	var ul []*entities.UserEntity
-	ul = append(ul, &user)
+	var ul []*user.Entity
+	ul = append(ul, &ue)
 
 	s.urepo.On("GetUser", &loginID, name, mail).Return(ul, fmt.Errorf("error test"))
 
@@ -122,8 +124,8 @@ func (s *GetTokenLoginUsecaseSuite) SetupSuite() {
 }
 
 func (s *GetTokenLoginUsecaseSuite) TestSuccess() {
-	user := entities.UserEntity{UserID: 1, LoginID: "t1"}
-	token := entities.TokenEntity{User: user}
+	user := user.Entity{UserID: 1, LoginID: "t1"}
+	token := token.Entity{User: user}
 	s.trepo.On("SetToken", user).Return(&token, nil)
 
 	repo := ri.InRepository{TokenRepository: s.trepo}
@@ -137,8 +139,8 @@ func (s *GetTokenLoginUsecaseSuite) TestSuccess() {
 }
 
 func (s *GetTokenLoginUsecaseSuite) TestFail() {
-	user := entities.UserEntity{UserID: 2, LoginID: "t2"}
-	token := entities.TokenEntity{User: user}
+	user := user.Entity{UserID: 2, LoginID: "t2"}
+	token := token.Entity{User: user}
 	s.trepo.On("SetToken", user).Return(&token, fmt.Errorf("error test"))
 
 	repo := ri.InRepository{TokenRepository: s.trepo}

@@ -1,6 +1,8 @@
 package rqp
 
-import "app/entities"
+import (
+	"app/entities/user"
+)
 
 type RegistUser struct {
 	LoginID  string `json:"login_id" validate:"required"`
@@ -9,8 +11,8 @@ type RegistUser struct {
 	Mail     string `json:"mail"`
 }
 
-func (e *RegistUser) ConvertEntity() entities.UserEntity {
-	return entities.UserEntity{
+func (e *RegistUser) ConvertEntity() user.Entity {
+	return user.Entity{
 		LoginID:  e.LoginID,
 		Password: e.Password,
 		Mail:     e.Mail,

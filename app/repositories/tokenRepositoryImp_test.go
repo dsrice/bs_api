@@ -1,7 +1,7 @@
 package repositories_test
 
 import (
-	"app/entities"
+	"app/entities/user"
 	"app/infra/database/connection"
 	"app/repositories"
 	"app/repositories/ri"
@@ -21,7 +21,7 @@ func (s *SetTokenSuite) SetupSuite() {
 }
 
 func (s *SetTokenSuite) TestSuccess() {
-	user := entities.UserEntity{UserID: 1}
+	user := user.Entity{UserID: 1}
 	t, err := s.repo.SetToken(user)
 
 	assert.Nil(s.T(), err)

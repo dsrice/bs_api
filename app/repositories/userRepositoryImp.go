@@ -1,7 +1,7 @@
 package repositories
 
 import (
-	"app/entities"
+	"app/entities/user"
 	"app/infra/database/connection"
 	"app/infra/database/models"
 	"app/infra/logger"
@@ -21,19 +21,19 @@ func NewUserRepository(con *connection.Connection) ri.UserRepository {
 	return &userRepositoryImp{con.Conn}
 }
 
-func (r *userRepositoryImp) GetUser(loginID, name, mail *string) ([]*entities.UserEntity, error) {
+func (r *userRepositoryImp) GetUser(us *user.Search) ([]*user.Entity, error) {
 	var muList []qm.QueryMod
 
-	if loginID != nil {
-		muList = append(muList, models.UserWhere.LoginID.EQ(*loginID))
+	if us.LoginID != nil {
+		muList = append(muList, models.UserWhere.LoginID.EQ(*us.LoginID))
 	}
 
-	if name != nil {
-		muList = append(muList, models.UserWhere.Name.EQ(null.StringFromPtr(name)))
+	if us.Name != nil {
+		muList = append(muList, models.UserWhere.Name.EQ(null.StringFromPtr(us.Name)))
 	}
 
-	if mail != nil {
-		muList = append(muList, models.UserWhere.Mail.EQ(null.StringFromPtr(mail)))
+	if us.Mail != nil {
+		muList = append(muList, models.UserWhere.Mail.EQ(null.StringFromPtr(us.Mail)))
 	}
 
 	ul, err := models.Users(
@@ -45,9 +45,9 @@ func (r *userRepositoryImp) GetUser(loginID, name, mail *string) ([]*entities.Us
 		return nil, err
 	}
 
-	var uList []*entities.UserEntity
+	var uList []*user.Entity
 	for _, u := range ul {
-		e := entities.UserEntity{}
+		e := user.Entity{}
 		e.ConvertUser(u)
 		uList = append(uList, &e)
 	}
@@ -55,7 +55,7 @@ func (r *userRepositoryImp) GetUser(loginID, name, mail *string) ([]*entities.Us
 	return uList, nil
 }
 
-func (r *userRepositoryImp) RegistUser(user entities.UserEntity) error {
+func (r *userRepositoryImp) RegistUser(user user.Entity) error {
 	logger.Debug("RegistUser Repository start")
 	m := user.ConvertUserModel()
 

@@ -1,7 +1,8 @@
 package repositories
 
 import (
-	"app/entities"
+	"app/entities/token"
+	"app/entities/user"
 	"app/infra/database/connection"
 	"app/infra/database/models"
 	"app/infra/logger"
@@ -19,7 +20,7 @@ func NewTokenRepository(con *connection.Connection) ri.TokenRepository {
 	return &tokenRepositoryImp{con: con.Conn}
 }
 
-func (r *tokenRepositoryImp) SetToken(user entities.UserEntity) (*entities.TokenEntity, error) {
+func (r *tokenRepositoryImp) SetToken(user user.Entity) (*token.Entity, error) {
 	logger.Debug("SetToken Start")
 	_, err := models.Tokens(models.TokenWhere.UserID.EQ(user.UserID)).DeleteAll(context.Background(), r.con)
 
@@ -28,7 +29,7 @@ func (r *tokenRepositoryImp) SetToken(user entities.UserEntity) (*entities.Token
 		return nil, err
 	}
 
-	te := entities.TokenEntity{User: user}
+	te := token.Entity{User: user}
 	te.SetToken()
 
 	token := te.ConvertModel()

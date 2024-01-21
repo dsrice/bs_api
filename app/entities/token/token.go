@@ -1,4 +1,4 @@
-package entities
+package token
 
 import (
 	"app/entities/user"
@@ -7,13 +7,13 @@ import (
 	"math/rand"
 )
 
-type TokenEntity struct {
+type Entity struct {
 	User         user.Entity
 	Token        string
 	RefreshToken string
 }
 
-func (e *TokenEntity) ConvertModel() *models.Token {
+func (e *Entity) ConvertModel() *models.Token {
 	return &models.Token{
 		UserID:       e.User.UserID,
 		Token:        null.String{String: e.Token, Valid: true},
@@ -21,12 +21,12 @@ func (e *TokenEntity) ConvertModel() *models.Token {
 	}
 }
 
-func (e *TokenEntity) SetToken() {
+func (e *Entity) SetToken() {
 	e.Token = e.createToken()
 	e.RefreshToken = e.createToken()
 }
 
-func (e *TokenEntity) createToken() string {
+func (e *Entity) createToken() string {
 	var letterRunes = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890")
 
 	b := make([]rune, 30)
