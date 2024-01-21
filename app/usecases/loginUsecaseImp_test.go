@@ -94,11 +94,13 @@ func (s *GetUserLoginUsecaseSuite) TestSuccess() {
 func (s *GetUserLoginUsecaseSuite) TestError() {
 	ue := user.Entity{UserID: 1, LoginID: "t2"}
 	loginID := "t2"
-	var name, mail *string
+	us := user.Search{
+		LoginID: &loginID,
+	}
 	var ul []*user.Entity
 	ul = append(ul, &ue)
 
-	s.urepo.On("GetUser", &loginID, name, mail).Return(ul, fmt.Errorf("error test"))
+	s.urepo.On("GetUser", &us).Return(ul, fmt.Errorf("error test"))
 
 	repo := ri.InRepository{UserRepo: s.urepo}
 

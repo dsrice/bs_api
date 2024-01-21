@@ -208,6 +208,25 @@ func (s *GetUserUsecaseSuite) TestSuccess() {
 	assert.Len(s.T(), result, 1)
 }
 
+func (s *GetUserUsecaseSuite) TestFailed() {
+	var ul []*user.Entity
+	loginID := "t2"
+	us := user.Search{
+		LoginID: &loginID,
+	}
+
+	s.urepo.On("GetUser", &us).Return(ul, fmt.Errorf("test error"))
+
+	ir := ri.InRepository{UserRepo: s.urepo}
+	uc := usecases.NewUserUsecase(ir)
+
+	result, err := uc.GetUsers(&us)
+
+	assert.NotNil(s.T(), err)
+	assert.Equal(s.T(), err.Error(), "test error")
+	assert.Nil(s.T(), result)
+}
+
 func TestGetUserUsecaseSuite(t *testing.T) {
 	suite.Run(t, new(GetUserUsecaseSuite))
 }

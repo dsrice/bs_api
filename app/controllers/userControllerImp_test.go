@@ -180,3 +180,67 @@ func (s *UserResitUserControllerSuite) TestFailRegistUser() {
 func TestUserResitUserControllerSuite(t *testing.T) {
 	suite.Run(t, new(UserResitUserControllerSuite))
 }
+
+type GetUserUserControllerSuite struct {
+	suite.Suite
+	uc *umock.UserUsecaseMock
+	ct ci.UserController
+}
+
+func (s *GetUserUserControllerSuite) SetupTest() {
+	s.uc = new(umock.UserUsecaseMock)
+}
+
+func (s *GetUserUserControllerSuite) TestSuccess() {
+	us := user.Search{}
+	u := user.Entity{
+		LoginID: "t1",
+		Name:    "n1",
+	}
+
+	var ul []*user.Entity
+	ul = append(ul, &u)
+	s.uc.On("GetUsers", &us).Return(ul, nil)
+
+	e := echo.New()
+	e.Validator = &server.CustomValidator{Validator: validator.New()}
+	req := httptest.NewRequest(http.MethodGet, "/user", nil)
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	rec := httptest.NewRecorder()
+	c := e.NewContext(req, rec)
+	ic := ui.InUsecase{UserUsecase: s.uc}
+	ct := controllers.NewUserController(ic)
+
+	if assert.NoError(s.T(), ct.GetUser(c)) {
+		assert.Equal(s.T(), http.StatusOK, rec.Code)
+
+		var result rsp.GetUser
+		json.Unmarshal(rec.Body.Bytes(), &result)
+		assert.Equal(s.T(), "t1", result.Users[0].LoginID)
+		assert.Equal(s.T(), "n1", result.Users[0].Name)
+	}
+}
+
+func (s *GetUserUserControllerSuite) TestFailed() {
+	us := user.Search{}
+
+	var ul []*user.Entity
+	s.uc.On("GetUsers", &us).Return(ul, fmt.Errorf("test error"))
+
+	e := echo.New()
+	e.Validator = &server.CustomValidator{Validator: validator.New()}
+	req := httptest.NewRequest(http.MethodGet, "/user", nil)
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	rec := httptest.NewRecorder()
+	c := e.NewContext(req, rec)
+	ic := ui.InUsecase{UserUsecase: s.uc}
+	ct := controllers.NewUserController(ic)
+
+	if assert.NoError(s.T(), ct.GetUser(c)) {
+		assert.Equal(s.T(), http.StatusInternalServerError, rec.Code)
+	}
+}
+
+func TestGetUserUserControllerSuite(t *testing.T) {
+	suite.Run(t, new(GetUserUserControllerSuite))
+}
