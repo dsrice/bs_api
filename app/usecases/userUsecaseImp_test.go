@@ -5,42 +5,46 @@ import (
 	"app/entities/user"
 	"app/repositories/ri"
 	"app/repositories/rmock"
+	"app/tester"
 	"app/usecases"
 	"fmt"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
+	"net/http"
 	"testing"
 )
 
 type RegistUserUsecaseSuite struct {
 	suite.Suite
-	urepo *rmock.UserRepositoryMock
+	urepo  *rmock.UserRepositoryMock
+	tester tester.Tester
 }
 
 func (s *RegistUserUsecaseSuite) SetupSuite() {
 	s.urepo = new(rmock.UserRepositoryMock)
+	s.tester = tester.CreateContext(http.MethodPost, "/", nil)
 }
 
 func (s *RegistUserUsecaseSuite) TestSuccess() {
 	user := user.Entity{LoginID: "t1"}
-	s.urepo.On("RegistUser", user).Return(nil)
+	s.urepo.On("RegistUser", user, s.tester.Context).Return(nil)
 
 	ir := ri.InRepository{UserRepo: s.urepo}
 	uc := usecases.NewUserUsecase(ir)
 
-	err := uc.RegistUser(&user)
+	err := uc.RegistUser(&user, s.tester.Context)
 
 	assert.Nil(s.T(), err)
 }
 
 func (s *RegistUserUsecaseSuite) TestFailed() {
 	user := user.Entity{LoginID: "t2"}
-	s.urepo.On("RegistUser", user).Return(fmt.Errorf("error test"))
+	s.urepo.On("RegistUser", user, s.tester.Context).Return(fmt.Errorf("error test"))
 
 	ir := ri.InRepository{UserRepo: s.urepo}
 	uc := usecases.NewUserUsecase(ir)
 
-	err := uc.RegistUser(&user)
+	err := uc.RegistUser(&user, s.tester.Context)
 
 	assert.Equal(s.T(), err.Error(), "error test")
 }
@@ -51,11 +55,13 @@ func TestRegistUserUsecaseSuite(t *testing.T) {
 
 type CheckUserUsecaseSuite struct {
 	suite.Suite
-	urepo *rmock.UserRepositoryMock
+	urepo  *rmock.UserRepositoryMock
+	tester tester.Tester
 }
 
 func (s *CheckUserUsecaseSuite) SetupSuite() {
 	s.urepo = new(rmock.UserRepositoryMock)
+	s.tester = tester.CreateContext(http.MethodPost, "/", nil)
 }
 
 func (s *CheckUserUsecaseSuite) TestSuccess() {
@@ -66,12 +72,12 @@ func (s *CheckUserUsecaseSuite) TestSuccess() {
 	var ul []*user.Entity
 	u := user.Entity{UserID: 1}
 	ul = append(ul, &u)
-	s.urepo.On("GetUser", &us).Return(ul, nil)
+	s.urepo.On("GetUser", &us, s.tester.Context).Return(ul, nil)
 
 	ir := ri.InRepository{UserRepo: s.urepo}
 	uc := usecases.NewUserUsecase(ir)
 
-	user, err := uc.CheckUser(loginID)
+	user, err := uc.CheckUser(loginID, s.tester.Context)
 
 	assert.Nil(s.T(), err)
 	assert.Equal(s.T(), user.UserID, 1)
@@ -83,12 +89,12 @@ func (s *CheckUserUsecaseSuite) TestSFailedError() {
 		LoginID: &loginID,
 	}
 	var ul []*user.Entity
-	s.urepo.On("GetUser", &us).Return(ul, fmt.Errorf("test error"))
+	s.urepo.On("GetUser", &us, s.tester.Context).Return(ul, fmt.Errorf("test error"))
 
 	ir := ri.InRepository{UserRepo: s.urepo}
 	uc := usecases.NewUserUsecase(ir)
 
-	user, err := uc.CheckUser(loginID)
+	user, err := uc.CheckUser(loginID, s.tester.Context)
 
 	assert.Equal(s.T(), err.Error(), "test error")
 	assert.Nil(s.T(), user)
@@ -104,12 +110,12 @@ func (s *CheckUserUsecaseSuite) TestSFailedUnique() {
 	ul = append(ul, &u)
 	u = user.Entity{UserID: 2}
 	ul = append(ul, &u)
-	s.urepo.On("GetUser", &us).Return(ul, nil)
+	s.urepo.On("GetUser", &us, s.tester.Context).Return(ul, nil)
 
 	ir := ri.InRepository{UserRepo: s.urepo}
 	uc := usecases.NewUserUsecase(ir)
 
-	user, err := uc.CheckUser(loginID)
+	user, err := uc.CheckUser(loginID, s.tester.Context)
 
 	assert.Equal(s.T(), err.Error(), "ユーザーが見つかりませんでいた。 該当数:2")
 	assert.Nil(s.T(), user)
@@ -181,11 +187,13 @@ func TestRegistValidateUsecaseSuite(t *testing.T) {
 
 type GetUserUsecaseSuite struct {
 	suite.Suite
-	urepo *rmock.UserRepositoryMock
+	urepo  *rmock.UserRepositoryMock
+	tester tester.Tester
 }
 
 func (s *GetUserUsecaseSuite) SetupSuite() {
 	s.urepo = new(rmock.UserRepositoryMock)
+	s.tester = tester.CreateContext(http.MethodPost, "/", nil)
 }
 
 func (s *GetUserUsecaseSuite) TestSuccess() {
@@ -197,12 +205,12 @@ func (s *GetUserUsecaseSuite) TestSuccess() {
 
 	u := user.Entity{UserID: 1}
 	ul = append(ul, &u)
-	s.urepo.On("GetUser", &us).Return(ul, nil)
+	s.urepo.On("GetUser", &us, s.tester.Context).Return(ul, nil)
 
 	ir := ri.InRepository{UserRepo: s.urepo}
 	uc := usecases.NewUserUsecase(ir)
 
-	result, err := uc.GetUsers(&us)
+	result, err := uc.GetUsers(&us, s.tester.Context)
 
 	assert.Nil(s.T(), err)
 	assert.Len(s.T(), result, 1)
@@ -215,12 +223,12 @@ func (s *GetUserUsecaseSuite) TestFailed() {
 		LoginID: &loginID,
 	}
 
-	s.urepo.On("GetUser", &us).Return(ul, fmt.Errorf("test error"))
+	s.urepo.On("GetUser", &us, s.tester.Context).Return(ul, fmt.Errorf("test error"))
 
 	ir := ri.InRepository{UserRepo: s.urepo}
 	uc := usecases.NewUserUsecase(ir)
 
-	result, err := uc.GetUsers(&us)
+	result, err := uc.GetUsers(&us, s.tester.Context)
 
 	assert.NotNil(s.T(), err)
 	assert.Equal(s.T(), err.Error(), "test error")

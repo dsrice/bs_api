@@ -8,6 +8,7 @@ import (
 	"app/entities/token"
 	"app/entities/user"
 	"app/infra/server"
+	"app/tester"
 	"app/usecases/ui"
 	"app/usecases/umock"
 	"encoding/json"
@@ -34,27 +35,24 @@ func (s *LoginControllerSuite) SetupSuite() {
 
 func (s *LoginControllerSuite) TestSuccess() {
 	rqp := rqp.Login{LoginID: "t1", Password: "t1"}
+	rqpJson, _ := json.Marshal(rqp)
+	tester := tester.CreateContext(http.MethodPost, "/login", strings.NewReader(string(rqpJson)))
+
 	user := user.Entity{UserID: 1, LoginID: "t1"}
 	token := token.Entity{User: user, Token: "token", RefreshToken: "refresh"}
-	s.uc.On("Validate", rqp).Return(nil)
-	s.uc.On("GetUser", rqp.LoginID).Return(&user, nil)
-	s.uc.On("GetToken", &user).Return(&token, nil)
 
-	rqpJson, _ := json.Marshal(rqp)
-	e := echo.New()
-	e.Validator = &server.CustomValidator{Validator: validator.New()}
-	req := httptest.NewRequest(http.MethodPost, "/login", strings.NewReader(string(rqpJson)))
-	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
-	rec := httptest.NewRecorder()
-	c := e.NewContext(req, rec)
 	ic := ui.InUsecase{Login: s.uc}
 	ct := controllers.NewLoginController(ic)
 
-	if assert.NoError(s.T(), ct.Login(c)) {
-		assert.Equal(s.T(), http.StatusOK, rec.Code)
+	s.uc.On("Validate", rqp).Return(nil)
+	s.uc.On("GetUser", rqp.LoginID, tester.Context).Return(&user, nil)
+	s.uc.On("GetToken", &user, tester.Context).Return(&token, nil)
+
+	if assert.NoError(s.T(), ct.Login(tester.Context)) {
+		assert.Equal(s.T(), http.StatusOK, tester.Recorder.Code)
 
 		result := rsp.Login{}
-		json.Unmarshal(rec.Body.Bytes(), &result)
+		json.Unmarshal(tester.Recorder.Body.Bytes(), &result)
 		assert.Equal(s.T(), "token", result.Token)
 		assert.Equal(s.T(), "refresh", result.RefreshToken)
 	}
@@ -64,9 +62,6 @@ func (s *LoginControllerSuite) TestFailBadParam() {
 	rqp := rqp.Login{LoginID: "t2"}
 	user := user.Entity{UserID: 2, LoginID: "t2"}
 	token := token.Entity{User: user, Token: "token", RefreshToken: "refresh"}
-	s.uc.On("Validate", rqp).Return(nil)
-	s.uc.On("GetUser", rqp.LoginID).Return(&user, nil)
-	s.uc.On("GetToken", &user).Return(&token, nil)
 
 	e := echo.New()
 	e.Validator = &server.CustomValidator{Validator: validator.New()}
@@ -77,6 +72,10 @@ func (s *LoginControllerSuite) TestFailBadParam() {
 	ic := ui.InUsecase{Login: s.uc}
 	ct := controllers.NewLoginController(ic)
 
+	s.uc.On("Validate", rqp).Return(nil)
+	s.uc.On("GetUser", rqp.LoginID, c).Return(&user, nil)
+	s.uc.On("GetToken", &user, c).Return(&token, nil)
+
 	if assert.NoError(s.T(), ct.Login(c)) {
 		assert.Equal(s.T(), http.StatusBadRequest, rec.Code)
 	}
@@ -86,9 +85,6 @@ func (s *LoginControllerSuite) TestFailParam() {
 	rqp := rqp.Login{LoginID: "t2"}
 	user := user.Entity{UserID: 2, LoginID: "t2"}
 	token := token.Entity{User: user, Token: "token", RefreshToken: "refresh"}
-	s.uc.On("Validate", rqp).Return(nil)
-	s.uc.On("GetUser", rqp.LoginID).Return(&user, nil)
-	s.uc.On("GetToken", &user).Return(&token, nil)
 
 	e := echo.New()
 	e.Validator = &server.CustomValidator{Validator: validator.New()}
@@ -99,6 +95,10 @@ func (s *LoginControllerSuite) TestFailParam() {
 	ic := ui.InUsecase{Login: s.uc}
 	ct := controllers.NewLoginController(ic)
 
+	s.uc.On("Validate", rqp).Return(nil)
+	s.uc.On("GetUser", rqp.LoginID, c).Return(&user, nil)
+	s.uc.On("GetToken", &user, c).Return(&token, nil)
+
 	if assert.NoError(s.T(), ct.Login(c)) {
 		assert.Equal(s.T(), http.StatusBadRequest, rec.Code)
 	}
@@ -108,9 +108,6 @@ func (s *LoginControllerSuite) TestFailNoPass() {
 	rqp := rqp.Login{LoginID: "t3", Password: "t3"}
 	user := user.Entity{UserID: 3, LoginID: "t3"}
 	token := token.Entity{User: user, Token: "token", RefreshToken: "refresh"}
-	s.uc.On("Validate", rqp).Return(fmt.Errorf("error test"))
-	s.uc.On("GetUser", rqp.LoginID).Return(&user, nil)
-	s.uc.On("GetToken", &user).Return(&token, nil)
 
 	rqpJson, _ := json.Marshal(rqp)
 	e := echo.New()
@@ -121,6 +118,10 @@ func (s *LoginControllerSuite) TestFailNoPass() {
 	c := e.NewContext(req, rec)
 	ic := ui.InUsecase{Login: s.uc}
 	ct := controllers.NewLoginController(ic)
+
+	s.uc.On("Validate", rqp).Return(fmt.Errorf("error test"))
+	s.uc.On("GetUser", rqp.LoginID, c).Return(&user, nil)
+	s.uc.On("GetToken", &user, c).Return(&token, nil)
 
 	if assert.NoError(s.T(), ct.Login(c)) {
 		assert.Equal(s.T(), http.StatusBadRequest, rec.Code)
@@ -131,9 +132,6 @@ func (s *LoginControllerSuite) TestFailNoUser() {
 	rqp := rqp.Login{LoginID: "t4", Password: "t4"}
 	user := user.Entity{UserID: 4, LoginID: "t4"}
 	token := token.Entity{User: user, Token: "token", RefreshToken: "refresh"}
-	s.uc.On("Validate", rqp).Return(nil)
-	s.uc.On("GetUser", rqp.LoginID).Return(&user, fmt.Errorf("error test"))
-	s.uc.On("GetToken", &user).Return(&token, nil)
 
 	rqpJson, _ := json.Marshal(rqp)
 	e := echo.New()
@@ -144,6 +142,10 @@ func (s *LoginControllerSuite) TestFailNoUser() {
 	c := e.NewContext(req, rec)
 	ic := ui.InUsecase{Login: s.uc}
 	ct := controllers.NewLoginController(ic)
+
+	s.uc.On("Validate", rqp).Return(nil)
+	s.uc.On("GetUser", rqp.LoginID, c).Return(&user, fmt.Errorf("error test"))
+	s.uc.On("GetToken", &user, c).Return(&token, nil)
 
 	if assert.NoError(s.T(), ct.Login(c)) {
 		assert.Equal(s.T(), http.StatusUnauthorized, rec.Code)
@@ -154,9 +156,6 @@ func (s *LoginControllerSuite) TestFailToken() {
 	rqp := rqp.Login{LoginID: "t5", Password: "t5"}
 	user := user.Entity{UserID: 5, LoginID: "t5"}
 	token := token.Entity{User: user, Token: "token", RefreshToken: "refresh"}
-	s.uc.On("Validate", rqp).Return(nil)
-	s.uc.On("GetUser", rqp.LoginID).Return(&user, nil)
-	s.uc.On("GetToken", &user).Return(&token, fmt.Errorf("error test"))
 
 	rqpJson, _ := json.Marshal(rqp)
 	e := echo.New()
@@ -167,6 +166,10 @@ func (s *LoginControllerSuite) TestFailToken() {
 	c := e.NewContext(req, rec)
 	ic := ui.InUsecase{Login: s.uc}
 	ct := controllers.NewLoginController(ic)
+
+	s.uc.On("Validate", rqp).Return(nil)
+	s.uc.On("GetUser", rqp.LoginID, c).Return(&user, nil)
+	s.uc.On("GetToken", &user, c).Return(&token, fmt.Errorf("error test"))
 
 	if assert.NoError(s.T(), ct.Login(c)) {
 		assert.Equal(s.T(), http.StatusInternalServerError, rec.Code)

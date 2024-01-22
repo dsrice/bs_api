@@ -5,26 +5,30 @@ import (
 	"app/infra/database/connection"
 	"app/repositories"
 	"app/repositories/ri"
+	"app/tester"
 	"context"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 	"log"
+	"net/http"
 	"testing"
 )
 
 type GetUserSuite struct {
 	suite.Suite
-	repo ri.UserRepository
+	repo   ri.UserRepository
+	tester tester.Tester
 }
 
 func (s *GetUserSuite) SetupSuite() {
 	conn := connection.NewConnection()
 	s.repo = repositories.NewUserRepository(conn)
+	s.tester = tester.CreateContext(http.MethodPost, "/", nil)
 }
 
 func (s *GetUserSuite) TestSuccessALL() {
 	us := user.Search{}
-	ul, err := s.repo.GetUser(&us)
+	ul, err := s.repo.GetUser(&us, s.tester.Context)
 
 	assert.Nil(s.T(), err)
 	assert.Equal(s.T(), ul[0].LoginID, "test")
@@ -36,7 +40,7 @@ func (s *GetUserSuite) TestSuccessLoginID() {
 	us := user.Search{
 		LoginID: &loginID,
 	}
-	ul, err := s.repo.GetUser(&us)
+	ul, err := s.repo.GetUser(&us, s.tester.Context)
 
 	assert.Nil(s.T(), err)
 	assert.Equal(s.T(), ul[0].LoginID, "test")
@@ -48,7 +52,7 @@ func (s *GetUserSuite) TestSuccessName() {
 	us := user.Search{
 		Name: &name,
 	}
-	ul, err := s.repo.GetUser(&us)
+	ul, err := s.repo.GetUser(&us, s.tester.Context)
 
 	assert.Nil(s.T(), err)
 	assert.Equal(s.T(), ul[0].LoginID, "test")
@@ -61,7 +65,7 @@ func (s *GetUserSuite) TestSuccessMail() {
 		Mail: &mail,
 	}
 
-	ul, err := s.repo.GetUser(&us)
+	ul, err := s.repo.GetUser(&us, s.tester.Context)
 
 	assert.Nil(s.T(), err)
 	assert.Equal(s.T(), ul[0].LoginID, "test")
@@ -74,12 +78,14 @@ func TestGetUserSuite(t *testing.T) {
 
 type RegistUserSuite struct {
 	suite.Suite
-	repo ri.UserRepository
+	repo   ri.UserRepository
+	tester tester.Tester
 }
 
 func (s *RegistUserSuite) SetupSuite() {
 	conn := connection.NewConnection()
 	s.repo = repositories.NewUserRepository(conn)
+	s.tester = tester.CreateContext(http.MethodPost, "/", nil)
 
 	user := user.Entity{
 		UserID:   11,
@@ -105,7 +111,7 @@ func (s *RegistUserSuite) Test_01_Success() {
 		Mail:     "test@test",
 	}
 
-	err := s.repo.RegistUser(user)
+	err := s.repo.RegistUser(user, s.tester.Context)
 
 	assert.Nil(s.T(), err)
 }
@@ -119,7 +125,7 @@ func (s *RegistUserSuite) Test_02_Failed() {
 		Mail:     "test@test",
 	}
 
-	err := s.repo.RegistUser(user)
+	err := s.repo.RegistUser(user, s.tester.Context)
 
 	assert.NotNil(s.T(), err)
 }

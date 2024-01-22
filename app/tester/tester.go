@@ -12,7 +12,7 @@ import (
 type Tester struct {
 	Request  *http.Request
 	Recorder *httptest.ResponseRecorder
-	Contest  echo.Context
+	Context  echo.Context
 }
 
 func CreateContext(method, path string, body io.Reader) Tester {
@@ -25,6 +25,6 @@ func CreateContext(method, path string, body io.Reader) Tester {
 	return Tester{
 		Request:  req,
 		Recorder: rec,
-		Contest:  e.NewContext(req, rec),
+		Context:  e.NewContext(req, rec),
 	}
 }

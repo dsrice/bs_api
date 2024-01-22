@@ -36,9 +36,6 @@ func (s *UserResitUserControllerSuite) TestSuccess() {
 	ue := user.Entity{LoginID: "t1", Password: "p1", Name: "n1"}
 	u := new(user.Entity)
 	u = nil
-	s.uc.On("RegistValidate", rqp).Return(nil)
-	s.uc.On("CheckUser", rqp.LoginID).Return(u, nil)
-	s.uc.On("RegistUser", &ue).Return(nil)
 
 	rqpJson, _ := json.Marshal(rqp)
 	e := echo.New()
@@ -49,6 +46,10 @@ func (s *UserResitUserControllerSuite) TestSuccess() {
 	c := e.NewContext(req, rec)
 	ic := ui.InUsecase{UserUsecase: s.uc}
 	ct := controllers.NewUserController(ic)
+
+	s.uc.On("RegistValidate", rqp).Return(nil)
+	s.uc.On("CheckUser", rqp.LoginID, c).Return(u, nil)
+	s.uc.On("RegistUser", &ue, c).Return(nil)
 
 	if assert.NoError(s.T(), ct.RegistUser(c)) {
 		assert.Equal(s.T(), http.StatusOK, rec.Code)
@@ -65,9 +66,6 @@ func (s *UserResitUserControllerSuite) TestFailLessParam() {
 	ue := user.Entity{LoginID: "t1", Password: "p1", Name: "n1"}
 	u := new(user.Entity)
 	u = nil
-	s.uc.On("RegistValidate", rqp).Return(fmt.Errorf("error test"))
-	s.uc.On("CheckUser", rqp.LoginID).Return(u, nil)
-	s.uc.On("RegistUser", &ue).Return(nil)
 
 	rqpJson := `{"login_id": "t1"}`
 	e := echo.New()
@@ -79,6 +77,10 @@ func (s *UserResitUserControllerSuite) TestFailLessParam() {
 	ic := ui.InUsecase{UserUsecase: s.uc}
 	ct := controllers.NewUserController(ic)
 
+	s.uc.On("RegistValidate", rqp).Return(fmt.Errorf("error test"))
+	s.uc.On("CheckUser", rqp.LoginID, c).Return(u, nil)
+	s.uc.On("RegistUser", &ue, c).Return(nil)
+
 	if assert.NoError(s.T(), ct.RegistUser(c)) {
 		assert.Equal(s.T(), http.StatusBadRequest, rec.Code)
 	}
@@ -89,9 +91,6 @@ func (s *UserResitUserControllerSuite) TestFailEmptyParam() {
 	ue := user.Entity{LoginID: "te", Password: "p1", Name: "n1"}
 	u := new(user.Entity)
 	u = nil
-	s.uc.On("RegistValidate", rqp).Return(fmt.Errorf("error test"))
-	s.uc.On("CheckUser", rqp.LoginID).Return(u, nil)
-	s.uc.On("RegistUser", &ue).Return(nil)
 
 	rqpJson, _ := json.Marshal(rqp)
 	e := echo.New()
@@ -102,6 +101,10 @@ func (s *UserResitUserControllerSuite) TestFailEmptyParam() {
 	c := e.NewContext(req, rec)
 	ic := ui.InUsecase{UserUsecase: s.uc}
 	ct := controllers.NewUserController(ic)
+
+	s.uc.On("RegistValidate", rqp).Return(fmt.Errorf("error test"))
+	s.uc.On("CheckUser", rqp.LoginID, c).Return(u, nil)
+	s.uc.On("RegistUser", &ue, c).Return(nil)
 
 	if assert.NoError(s.T(), ct.RegistUser(c)) {
 		assert.Equal(s.T(), http.StatusBadRequest, rec.Code)
@@ -111,9 +114,6 @@ func (s *UserResitUserControllerSuite) TestFailEmptyParam() {
 func (s *UserResitUserControllerSuite) TestFailUserLoginID() {
 	rqp := rqp.RegistUser{LoginID: "t2", Password: "p2", Name: "n2"}
 	user := user.Entity{LoginID: "t2", Password: "p2", Name: "n2"}
-	s.uc.On("RegistValidate", rqp).Return(nil)
-	s.uc.On("CheckUser", rqp.LoginID).Return(&user, nil)
-	s.uc.On("RegistUser", &user).Return(nil)
 
 	rqpJson, _ := json.Marshal(rqp)
 	e := echo.New()
@@ -124,6 +124,10 @@ func (s *UserResitUserControllerSuite) TestFailUserLoginID() {
 	c := e.NewContext(req, rec)
 	ic := ui.InUsecase{UserUsecase: s.uc}
 	ct := controllers.NewUserController(ic)
+
+	s.uc.On("RegistValidate", rqp).Return(nil)
+	s.uc.On("CheckUser", rqp.LoginID, c).Return(&user, nil)
+	s.uc.On("RegistUser", &user, c).Return(nil)
 
 	if assert.NoError(s.T(), ct.RegistUser(c)) {
 		assert.Equal(s.T(), http.StatusBadRequest, rec.Code)
@@ -133,9 +137,6 @@ func (s *UserResitUserControllerSuite) TestFailUserLoginID() {
 func (s *UserResitUserControllerSuite) TestFailCheckError() {
 	rqp := rqp.RegistUser{LoginID: "t3", Password: "p3", Name: "n3"}
 	user := user.Entity{LoginID: "t3", Password: "p3", Name: "n3"}
-	s.uc.On("RegistValidate", rqp).Return(nil)
-	s.uc.On("CheckUser", rqp.LoginID).Return(&user, fmt.Errorf("error test"))
-	s.uc.On("RegistUser", &user).Return(nil)
 
 	rqpJson, _ := json.Marshal(rqp)
 	e := echo.New()
@@ -146,6 +147,10 @@ func (s *UserResitUserControllerSuite) TestFailCheckError() {
 	c := e.NewContext(req, rec)
 	ic := ui.InUsecase{UserUsecase: s.uc}
 	ct := controllers.NewUserController(ic)
+
+	s.uc.On("RegistValidate", rqp).Return(nil)
+	s.uc.On("CheckUser", rqp.LoginID, c).Return(&user, fmt.Errorf("error test"))
+	s.uc.On("RegistUser", &user, c).Return(nil)
 
 	if assert.NoError(s.T(), ct.RegistUser(c)) {
 		assert.Equal(s.T(), http.StatusInternalServerError, rec.Code)
@@ -157,9 +162,6 @@ func (s *UserResitUserControllerSuite) TestFailRegistUser() {
 	ue := user.Entity{LoginID: "t4", Password: "p4", Name: "n4"}
 	u := new(user.Entity)
 	u = nil
-	s.uc.On("RegistValidate", rqp).Return(nil)
-	s.uc.On("CheckUser", rqp.LoginID).Return(u, nil)
-	s.uc.On("RegistUser", &ue).Return(fmt.Errorf("error test"))
 
 	rqpJson, _ := json.Marshal(rqp)
 	e := echo.New()
@@ -170,6 +172,10 @@ func (s *UserResitUserControllerSuite) TestFailRegistUser() {
 	c := e.NewContext(req, rec)
 	ic := ui.InUsecase{UserUsecase: s.uc}
 	ct := controllers.NewUserController(ic)
+
+	s.uc.On("RegistValidate", rqp).Return(nil)
+	s.uc.On("CheckUser", rqp.LoginID, c).Return(u, nil)
+	s.uc.On("RegistUser", &ue, c).Return(fmt.Errorf("error test"))
 
 	if assert.NoError(s.T(), ct.RegistUser(c)) {
 		assert.Equal(s.T(), http.StatusInternalServerError, rec.Code)
@@ -200,7 +206,6 @@ func (s *GetUserUserControllerSuite) TestSuccess() {
 
 	var ul []*user.Entity
 	ul = append(ul, &u)
-	s.uc.On("GetUsers", &us).Return(ul, nil)
 
 	e := echo.New()
 	e.Validator = &server.CustomValidator{Validator: validator.New()}
@@ -210,6 +215,8 @@ func (s *GetUserUserControllerSuite) TestSuccess() {
 	c := e.NewContext(req, rec)
 	ic := ui.InUsecase{UserUsecase: s.uc}
 	ct := controllers.NewUserController(ic)
+
+	s.uc.On("GetUsers", &us, c).Return(ul, nil)
 
 	if assert.NoError(s.T(), ct.GetUser(c)) {
 		assert.Equal(s.T(), http.StatusOK, rec.Code)
@@ -225,7 +232,6 @@ func (s *GetUserUserControllerSuite) TestFailed() {
 	us := user.Search{}
 
 	var ul []*user.Entity
-	s.uc.On("GetUsers", &us).Return(ul, fmt.Errorf("test error"))
 
 	e := echo.New()
 	e.Validator = &server.CustomValidator{Validator: validator.New()}
@@ -235,6 +241,8 @@ func (s *GetUserUserControllerSuite) TestFailed() {
 	c := e.NewContext(req, rec)
 	ic := ui.InUsecase{UserUsecase: s.uc}
 	ct := controllers.NewUserController(ic)
+
+	s.uc.On("GetUsers", &us, c).Return(ul, fmt.Errorf("test error"))
 
 	if assert.NoError(s.T(), ct.GetUser(c)) {
 		assert.Equal(s.T(), http.StatusInternalServerError, rec.Code)
