@@ -25,8 +25,8 @@ func (s *SetTokenSuite) SetupSuite() {
 }
 
 func (s *SetTokenSuite) TestSuccess() {
-	user := user.Entity{UserID: 1}
-	t, err := s.repo.SetToken(user, s.tester.Context)
+	u := user.Entity{UserID: 1}
+	t, err := s.repo.SetToken(u, s.tester.Context)
 
 	assert.Nil(s.T(), err)
 	assert.Equal(s.T(), t.User.UserID, 1)
